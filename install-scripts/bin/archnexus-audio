@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# archnexus-audio — pipewire audio sink/source picker via rofi/wofi.
+# Lists output sinks, sets default on selection, shows current volume.
+#
+# Bind it: Super+A
+
+set -uo pipefail
+
+if ! command -v wpctl >/dev/null 2>&1; then
+    echo "wpctl not installed (apt install wireplumber)" >&2
+    exit 1
+fi
+
+_pick() {
+    if   command -v rofi >/dev/null 2>&1; then rofi -dmenu -p "  Audio" -i -theme-str 'window {width: 50%; border: 2px solid; border-color: #00ff9c;} element selected {background-color: #00ff9c; text-color: #0a0a0a;} prompt {text-color: #00ff9c;}'
+    elif command -v wofi >/dev/null 2>&1; then wofi --dmenu --prompt "Audio"
+    else fzf
+    fi
+}
+
+# Parse `wpctl status` for sinks. Each sink looks like:
+#  *  ID. Name [vol: 1.00]
+mapfile -t sinks < <(wpctl status | awk '
+    /Audio/,/Video/ { print }
+' | awk '
+    /Sinks:/ { inSinks=1; next }
+    /Sources:|Filters:|Streams:/ { inSinks=0 }
+    inSinks && /^[[:space:]]*[*]?[[:space:]]*[0-9]+\./ {
+        gsub(/^[[:space:]]+\*?[[:space:]]+/, "")
+        # Strip trailing [vol: …]
+        sub(/[[:space:]]+\[vol:.*\]/, "")
+        print
+    }
+')
+
+if [ "${#sinks[@]}" -eq 0 ]; then
+    notify-send "archnexus-audio" "no sinks found" 2>/dev/null || echo "no sinks found" >&2
+    exit 1
+fi
+
+choice=$(printf '%s\n' "${sinks[@]}" | _pick)
+[ -z "$choice" ] && exit 0
+
+# Extract ID (number before the dot)
+sink_id=$(awk '{print $1}' <<<"$choice" | tr -d '.')
+[ -z "$sink_id" ] && exit 0
+
+wpctl set-default "$sink_id"
+notify-send "Audio" "default sink: $(awk '{$1=""; print substr($0,2)}' <<<"$choice")" 2>/dev/null || true

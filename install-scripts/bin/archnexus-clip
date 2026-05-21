@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# archnexus-clip — clipboard history picker.
+#
+# Auto-detects:
+#   Wayland (Hyprland)  → cliphist + wl-copy
+#   X11                 → greenclip (rofi-friendly) or xsel/xclip fallback
+#
+# Bind it: Super+V (or whatever)
+
+set -uo pipefail
+
+_pick() {
+    if   command -v rofi >/dev/null 2>&1; then rofi -dmenu -p "  Clipboard" -i -theme-str 'window {width: 60%; border: 2px solid; border-color: #00ff9c;} element selected {background-color: #00ff9c; text-color: #0a0a0a;} prompt {text-color: #00ff9c;}'
+    elif command -v wofi >/dev/null 2>&1; then wofi --dmenu --prompt "Clipboard"
+    else fzf
+    fi
+}
+
+_is_wayland() {
+    [ -n "${WAYLAND_DISPLAY:-}" ] || [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]
+}
+
+if _is_wayland && command -v cliphist >/dev/null 2>&1; then
+    sel=$(cliphist list | _pick)
+    [ -z "$sel" ] && exit 0
+    cliphist decode <<<"$sel" | wl-copy
+    notify-send "Clipboard" "copied" 2>/dev/null || true
+    exit 0
+fi
+
+if command -v greenclip >/dev/null 2>&1; then
+    exec rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'
+fi
+
+# Plain fallback: xsel/xclip + ~/.cache/archnexus/clip-history.txt
+HIST="$HOME/.cache/archnexus/clip-history.txt"
+mkdir -p "$(dirname "$HIST")"
+case "${1:-pick}" in
+    --record)
+        if command -v xclip >/dev/null 2>&1; then
+            content=$(xclip -o -selection clipboard 2>/dev/null) || exit 0
+        else
+            content=$(xsel -bo 2>/dev/null) || exit 0
+        fi
+        [ -z "$content" ] && exit 0
+        # Dedupe + cap to 200 entries
+        { printf '%s\n---\n' "$content"; head -c $((1024*200)) "$HIST" 2>/dev/null; } > "$HIST.tmp"
+        mv "$HIST.tmp" "$HIST" ;;
+    pick|*)
+        if [ ! -s "$HIST" ]; then
+            echo "no clipboard history yet (run 'archnexus-clip --record' periodically, or install cliphist/greenclip)" >&2
+            exit 1
+        fi
+        sel=$(awk -v RS='\n---\n' '{print NR": "substr($0,1,80)}' "$HIST" | _pick)
+        [ -z "$sel" ] && exit 0
+        idx=${sel%%:*}
+        entry=$(awk -v RS='\n---\n' -v n="$idx" 'NR==n {print; exit}' "$HIST")
+        if command -v xclip >/dev/null 2>&1; then
+            printf '%s' "$entry" | xclip -i -selection clipboard
+        else
+            printf '%s' "$entry" | xsel -b -i
+        fi
+        notify-send "Clipboard" "copied entry $idx" 2>/dev/null || true ;;
+esac

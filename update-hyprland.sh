@@ -293,8 +293,18 @@ declare -A repos=(
                 ;;
         esac
     else
-        # non-interactive: still record changes
+        # Non-interactive: still record changes — but DON'T silently overwrite
+        # the pinned tags file. CI/cron callers must explicitly opt in via
+        # FORCE_TAG_WRITE=1 (or the existing FORCE=1) so a scheduled run can't
+        # mutate the user's pinned versions behind their back.
         printf "%s\n" "${changes[@]}" >>"$CHANGES_FILE" || true
+        if [[ ${#changes[@]} -gt 0 && "${FORCE_TAG_WRITE:-${FORCE:-0}}" != "1" ]]; then
+            echo "[WARN] non-interactive with ${#changes[@]} tag change(s); refusing to overwrite $TAGS_FILE" | tee -a "$SUMMARY_LOG"
+            echo "[INFO] set FORCE_TAG_WRITE=1 (or FORCE=1) to apply, or rerun interactively to confirm." | tee -a "$SUMMARY_LOG"
+            latest_bak=$(ls -1t "$TAGS_FILE".bak-* 2>/dev/null | head -n1 || true)
+            [[ -n "$latest_bak" ]] && cp "$latest_bak" "$TAGS_FILE"
+            return 0
+        fi
     fi
 
     {

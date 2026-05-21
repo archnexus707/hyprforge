@@ -108,7 +108,8 @@ EOF
         if patch -p1 --dry-run <"$PARENT_DIR/assets/0001-fix-hyprland-compile-issue.patch" >/dev/null 2>&1; then
             patch -p1 <"$PARENT_DIR/assets/0001-fix-hyprland-compile-issue.patch"
         else
-            echo "${NOTE} Hyprland compile patch does not apply on $tag; skipping."
+            echo "${WARN} Hyprland patch does NOT apply cleanly on $tag — build proceeding UNPATCHED"
+            echo "${WARN}   (if compile fails, regenerate the patch against the new upstream tree)"
         fi
     fi
 
@@ -204,7 +205,10 @@ CONFIG_FLAGS=(
     "${SYSTEM_FLAGS[@]}"
 )
 cmake -S . -B "$BUILD_DIR" "${CONFIG_FLAGS[@]}"
-cmake --build "$BUILD_DIR" -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)"
+if ! cmake --build "$BUILD_DIR" -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)"; then
+    echo -e "${ERROR} Hyprland cmake --build failed; refusing to install a stale/partial build" 2>&1 | tee -a "$MLOG"
+    exit 1
+fi
 
     if [ $DO_INSTALL -eq 1 ]; then
         if sudo cmake --install "$BUILD_DIR" 2>&1 | tee -a "$MLOG"; then

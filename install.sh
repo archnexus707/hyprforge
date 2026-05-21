@@ -1,8 +1,19 @@
 #!/bin/bash
-# https://github.com/JaKooLit
+# Kali-Hyprland installer — by archnexus707
+# Special thanks: JaKooLit (https://github.com/JaKooLit) — early foundation
+# this Kali-targeted build was inspired by.
+# archnexus707 polish: banner + sudo prime + wallpaper-pack hook.
 
 
 clear
+
+# archnexus707 banner — safe to source: no `set -e`, gracefully degrades on
+# dumb terminals via NO_BANNER=1 or absence of 256-color support.
+if [ -f "$(dirname "$0")/install-scripts/archnexus_banner.sh" ]; then
+    # shellcheck disable=SC1091
+    . "$(dirname "$0")/install-scripts/archnexus_banner.sh"
+    archnexus_banner "Kali-Hyprland" "Hyprland on Kali — built from source, ready to rip"
+fi
 
 # Set some colors for output messages
 OK="$(tput setaf 2)[OK]$(tput sgr0)"
@@ -27,16 +38,25 @@ print_color() {
 
 print_help() {
     cat <<EOF
-KooL Debian-Hyprland installer
+Kali-Hyprland installer — by archnexus707
 Usage: ${0##*/} [OPTIONS]
 
 Options:
   --build-trixie         Force trixie compatibility mode
-  --no-trixie           Disable trixie compatibility mode
-  --preset <file>       Load preset file with options
-  --force-reinstall     Force APT re-installs where applicable
-  --tty                 Use simple TTY prompts instead of whiptail dialogs
-  -h, --help            Show this help and exit
+  --no-trixie            Disable trixie compatibility mode
+  --preset <file>        Load preset file with options
+  --force-reinstall      Force APT re-installs where applicable
+  --tty                  Use simple TTY prompts instead of whiptail dialogs
+  --resume               Continue from the most recent .completed file
+                         (skips any phase already marked done)
+  --resume-from <file>   Resume from a specific .completed file
+  --restart              Ignore prior .completed files; full fresh run
+  -h, --help             Show this help and exit
+
+Environment knobs:
+  FORCE_PREFLIGHT=1            Skip pre-flight abort on hard errors
+  ARCHNEXUS_PREFLIGHT_NO_NET=1 Skip the mirror reachability check
+  ARCHNEXUS_RETRY_MAX=N        Override git/curl retry count (default 3)
 
 Notes:
   --tty is a fallback for remote/CI or when terminals cannot render whiptail.
@@ -137,6 +157,20 @@ EOF"
 }
 
 verify_and_offer_fix_apt_sources() {
+    # Kali already ships with main contrib non-free non-free-firmware enabled in
+    # /etc/apt/sources.list, and uses a single-line kali-rolling source. Rewriting
+    # it with a Debian-style overlay would create duplicate APT targets and break
+    # `apt update`. Skip the rewrite entirely on Kali.
+    if [ -r /etc/os-release ]; then
+        # shellcheck disable=SC1091
+        . /etc/os-release 2>/dev/null || true
+        if [ "${ID:-}" = "kali" ]; then
+            echo -e "${INFO} Kali detected — skipping Debian-specific APT source rewrites." \
+                "Kali already enables non-free / non-free-firmware in /etc/apt/sources.list."
+            return 0
+        fi
+    fi
+
     # Unconditionally ensure deb-src is uncommented/enabled
     _enable_deb_src_conservatively
     # Write minimal overlay for missing non-free components (or remove overlay if not needed)
@@ -166,7 +200,7 @@ verify_and_offer_fix_apt_sources() {
 printf "\n%.0s" {1..2}
 print_color $YELLOW "
         █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
-              KooL's Debian - Hyprland October 2025 Update
+                    Kali-Hyprland — by archnexus707
               
             Most Hyprland packages are built from Source
 
@@ -294,7 +328,11 @@ if [ "$TRIXIE_MODE" = "auto" ]; then
     if [ -f /etc/os-release ]; then
         # shellcheck disable=SC1091
         . /etc/os-release || true
+        # Kali rolling tracks Debian testing/sid; the trixie source-level shims
+        # apply equally. Treat Kali as trixie for build-time toolchain quirks.
         if [ "${ID:-}" = "debian" ] && [ "${VERSION_CODENAME:-}" = "trixie" ]; then
+            HYPR_BUILD_TRIXIE=1
+        elif [ "${ID:-}" = "kali" ]; then
             HYPR_BUILD_TRIXIE=1
         fi
     fi
@@ -363,7 +401,7 @@ clean_existing_hyprland() {
 # Welcome / proceed (TTY or whiptail)
 if [ "$TTY_MODE" -eq 1 ]; then
     echo "========================================"
-    echo "KooL Debian-Hyprland Trixie+ Install Script"
+    echo "Kali-Hyprland Install Script — by archnexus707"
     echo "========================================"
     echo "ATTENTION: Run a full system update and reboot first (recommended)."
     echo "NOTE: On VMs, enable 3D acceleration or Hyprland may not start."
@@ -377,8 +415,8 @@ if [ "$TTY_MODE" -eq 1 ]; then
     esac
 else
     # Welcome message using whiptail (for displaying information)
-    whiptail --title "KooL Debian-Hyprland Trixie+ (2025) Install Script" \
-        --msgbox "Welcome to KooL Debian-Hyprland Trixie+  (2025) Install Script!!!\n\n\
+    whiptail --title "Kali-Hyprland Install Script — by archnexus707" \
+        --msgbox "Welcome to Kali-Hyprland Install Script — by archnexus707!\n\n\
 ATTENTION: Run a full system update and Reboot first !!! (Highly Recommended)\n\n\
 NOTE: If you are installing on a VM, ensure to enable 3D acceleration otherwise Hyprland may NOT start!" \
         15 80
@@ -391,7 +429,43 @@ NOTE: If you are installing on a VM, ensure to enable 3D acceleration otherwise 
     fi
 fi
 
-echo "👌 ${OK} 🇵🇭 ${MAGENTA}KooL..${RESET} ${SKY_BLUE}lets continue with the installation...${RESET}" | tee -a "$LOG"
+echo "👌 ${OK} ${MAGENTA}archnexus707${RESET} ${SKY_BLUE}let's continue with the installation...${RESET}" | tee -a "$LOG"
+
+# Prime sudo + start a keep-alive once for the whole session. Without this,
+# the many backgrounded `sudo apt install ... >>LOG 2>&1 &` calls inside
+# install_package can race with hidden password prompts and stall the spinner
+# forever during long source-build phases. Inlined here (not sourced from
+# Global_functions.sh) so install.sh does NOT inherit that file's `set -e`.
+if sudo -n true 2>/dev/null; then
+    : # credentials already cached
+else
+    echo "${INFO} installer needs sudo. Enter your password once now:"
+    if ! sudo -v; then
+        echo "${ERROR} sudo authentication failed; aborting." | tee -a "$LOG"
+        exit 2
+    fi
+fi
+( while kill -0 "$$" 2>/dev/null; do sudo -n true 2>/dev/null || exit; sleep 60; done ) &
+_ARCHNEXUS_SUDO_KEEPALIVE_PID=$!
+export _ARCHNEXUS_SUDO_KEEPALIVE_PID
+trap '[ -n "${_ARCHNEXUS_SUDO_KEEPALIVE_PID:-}" ] && kill "$_ARCHNEXUS_SUDO_KEEPALIVE_PID" 2>/dev/null; true' EXIT INT TERM
+
+# Pre-flight diagnostics (Hyprland builds from source — needs ~10GB free).
+# Run in a subshell so Global_functions.sh's `set -e` doesn't leak into us.
+_preflight_rc=0
+( . "$(dirname "$0")/install-scripts/Global_functions.sh" >/dev/null 2>&1; archnexus_preflight 10 ) || _preflight_rc=$?
+if [ "$_preflight_rc" -ne 0 ]; then
+    echo "${ERROR} pre-flight reported $_preflight_rc hard error(s); fix above and rerun." | tee -a "$LOG"
+    if [ "${FORCE_PREFLIGHT:-0}" != "1" ]; then
+        exit 2
+    fi
+    echo "${WARN} FORCE_PREFLIGHT=1 set — continuing anyway."
+fi
+unset _preflight_rc
+
+# Optional opt-in pre-install snapshot (Timeshift / Snapper / Btrfs). Runs in
+# a subshell so Global_functions.sh's `set -e` doesn't leak in.
+( . "$(dirname "$0")/install-scripts/Global_functions.sh" >/dev/null 2>&1; archnexus_offer_snapshot ) || true
 
 sleep 1
 printf "\n%.0s" {1..1}
@@ -406,26 +480,145 @@ fi
 # Path to the install-scripts directory
 script_directory=install-scripts
 
+# ----- archnexus707 resume support -----
+# Each successful execute_script call appends the script name to
+# $ARCHNEXUS_RESUME_FILE. With --resume, we load the most recent .completed
+# file and skip any phase already in it. --restart forces a fresh run.
+ARCHNEXUS_RESUME="${ARCHNEXUS_RESUME:-0}"
+ARCHNEXUS_RESUME_FROM=""
+for ((i=0; i<${#args[@]}; i++)); do
+    case "${args[$i]}" in
+        --resume) ARCHNEXUS_RESUME=1 ;;
+        --restart) ARCHNEXUS_RESUME=0 ;;
+        --resume-from)
+            if [ $((i+1)) -lt ${#args[@]} ]; then
+                ARCHNEXUS_RESUME=1
+                ARCHNEXUS_RESUME_FROM="${args[$((i+1))]}"
+            fi ;;
+    esac
+done
+ARCHNEXUS_RESUME_FILE="${LOG%.log}.completed"
+if [ "$ARCHNEXUS_RESUME" = "1" ] && [ -z "$ARCHNEXUS_RESUME_FROM" ]; then
+    _latest=$(ls -1t Install-Logs/*.completed 2>/dev/null | head -1 || true)
+    if [ -n "$_latest" ]; then
+        ARCHNEXUS_RESUME_FILE="$_latest"
+        echo "${INFO} resuming from $ARCHNEXUS_RESUME_FILE (skipping already-completed phases)" | tee -a "$LOG"
+    else
+        echo "${WARN} --resume requested but no .completed file found; starting fresh" | tee -a "$LOG"
+        ARCHNEXUS_RESUME=0
+    fi
+elif [ -n "$ARCHNEXUS_RESUME_FROM" ]; then
+    ARCHNEXUS_RESUME_FILE="$ARCHNEXUS_RESUME_FROM"
+    echo "${INFO} resuming from explicit file: $ARCHNEXUS_RESUME_FILE" | tee -a "$LOG"
+fi
+archnexus_phase_done() {
+    [ -f "$ARCHNEXUS_RESUME_FILE" ] && grep -qxF "$1" "$ARCHNEXUS_RESUME_FILE"
+}
+archnexus_mark_phase() {
+    mkdir -p "$(dirname "$ARCHNEXUS_RESUME_FILE")" 2>/dev/null || true
+    grep -qxF "$1" "$ARCHNEXUS_RESUME_FILE" 2>/dev/null || echo "$1" >> "$ARCHNEXUS_RESUME_FILE"
+}
+
+# Hook + notify helpers (sourced from Global_functions.sh in a subshell so
+# we don't inherit its `set -e` — same trick as the preflight call above).
+# We re-define lightweight versions here that defer to the same logic.
+archnexus_run_hooks() {
+    [ "${NO_HOOKS:-0}" = "1" ] && return 0
+    local hook="$1" ctx="${2:-}"
+    local hook_file="${ARCHNEXUS_HOOK_DIR:-install-scripts/hooks}/${hook}.sh"
+    [ -f "$hook_file" ] || return 0
+    [ -x "$hook_file" ] || chmod +x "$hook_file" 2>/dev/null
+    echo "${INFO} ⛓  hook: $hook" | tee -a "$LOG"
+    "$hook_file" "$ctx"
+    local rc=$?
+    [ "$rc" -eq 0 ] && return 0
+    if [ "${STRICT_HOOKS:-0}" = "1" ]; then
+        echo "${ERROR} hook failed (STRICT_HOOKS=1): $hook rc=$rc" | tee -a "$LOG"
+        return "$rc"
+    fi
+    echo "${WARN} hook failed (continuing): $hook rc=$rc" | tee -a "$LOG"
+    return 0
+}
+archnexus_notify() {
+    [ "${NOTIFY:-1}" = "0" ] && return 0
+    command -v notify-send >/dev/null 2>&1 || return 0
+    [ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}${DBUS_SESSION_BUS_ADDRESS:-}" ] && return 0
+    notify-send -u "${3:-normal}" -a "archnexus-installer" "$1" "${2:-}" >/dev/null 2>&1 || true
+}
+export ARCHNEXUS_HOOK_DIR="$(dirname "$0")/install-scripts/hooks"
+
+# Side-channel where install_package writes the names of packages that failed
+# to install. Sub-scripts inherit this via env. execute_script checks it after
+# every phase so a piped-to-tee install_package failure (which otherwise hides
+# its exit code from us) still gets flagged.
+KHYPR_FAIL_FILE="${KHYPR_FAIL_FILE:-Install-Logs/.failed-pkgs-$$.txt}"
+mkdir -p "$(dirname "$KHYPR_FAIL_FILE")" 2>/dev/null || true
+: > "$KHYPR_FAIL_FILE" 2>/dev/null || true
+export KHYPR_FAIL_FILE
+
+# Names of phases that failed during this run. Populated by execute_script.
+KHYPR_PHASE_FAILURES=()
+
 # Function to execute a script if it exists and make it executable
 execute_script() {
     local script="$1"; shift || true
+    if archnexus_phase_done "$script"; then
+        echo "${INFO} ⏭  skip (resumed): ${SKY_BLUE}$script${RESET}" | tee -a "$LOG"
+        return 0
+    fi
     local script_path="$script_directory/$script"
     local args=("$@")
+    local rc=0
+    local fail_before fail_after
+    fail_before=$( { wc -l < "$KHYPR_FAIL_FILE" 2>/dev/null || echo 0; } | tr -d ' ')
+    [ -z "$fail_before" ] && fail_before=0
+    archnexus_run_hooks "pre-all" "$script"
+    archnexus_run_hooks "pre-${script%.sh}"
+    archnexus_notify "Phase started: $script" "Kali-Hyprland"
     if [ -f "$script_path" ]; then
         chmod +x "$script_path"
         if [ -x "$script_path" ]; then
             # Pass flags via env so sub-scripts can react without CLI churn
             if [ "${HYPR_BUILD_TRIXIE:-0}" = "1" ]; then
                 env HYPR_BUILD_TRIXIE=1 HYPR_FORCE_REINSTALL=${FORCE_REINSTALL:-0} "$script_path" --build-trixie "${args[@]}"
+                rc=$?
             else
                 env HYPR_BUILD_TRIXIE=0 HYPR_FORCE_REINSTALL=${FORCE_REINSTALL:-0} "$script_path" "${args[@]}"
+                rc=$?
             fi
         else
             echo "Failed to make script '$script' executable." | tee -a "$LOG"
+            rc=1
         fi
     else
         echo "Script '$script' not found in '$script_directory'." | tee -a "$LOG"
+        rc=1
     fi
+    # Reconcile rc with the side-channel: even if the sub-script returned 0,
+    # if install_package wrote a new failure line during this phase, treat the
+    # phase as failed. This catches the common `install_package | tee` pattern
+    # where tee's 0 hides the underlying apt failure.
+    fail_after=$( { wc -l < "$KHYPR_FAIL_FILE" 2>/dev/null || echo 0; } | tr -d ' ')
+    [ -z "$fail_after" ] && fail_after=0
+    if [ "$rc" -eq 0 ] && [ "$fail_after" -gt "$fail_before" ]; then
+        local newly_failed
+        newly_failed=$(tail -n +$((fail_before + 1)) "$KHYPR_FAIL_FILE" 2>/dev/null | tr '\n' ' ')
+        echo "${ERROR} phase $script reported package failures via install_package: $newly_failed" | tee -a "$LOG"
+        rc=1
+    fi
+    if [ "$rc" -eq 0 ]; then
+        archnexus_mark_phase "$script"
+    else
+        KHYPR_PHASE_FAILURES+=("$script")
+    fi
+    archnexus_run_hooks "post-${script%.sh}" "$rc"
+    archnexus_run_hooks "post-all" "$script=$rc"
+    if [ "$rc" -eq 0 ]; then
+        archnexus_notify "Phase OK: $script" "Kali-Hyprland"
+    else
+        archnexus_notify "Phase FAILED: $script" "rc=$rc — see $LOG" critical
+    fi
+    return "$rc"
 }
 
 # Load centralized Hyprland stack tags if present and export for child scripts
@@ -483,6 +676,15 @@ load_preset() {
 # Check if --preset argument is passed (order-independent)
 if [ -n "${PRESET_FILE:-}" ]; then
     load_preset "$PRESET_FILE"
+fi
+
+# Per-machine override (#30): same git repo, different toggles per host.
+# Source AFTER the project preset so local.preset always wins.
+LOCAL_PRESET="${ARCHNEXUS_LOCAL_PRESET:-$HOME/.config/archnexus/local.preset}"
+if [ -f "$LOCAL_PRESET" ]; then
+    echo "✅ Loading per-machine override: $LOCAL_PRESET"
+    # shellcheck disable=SC1090
+    source "$LOCAL_PRESET"
 fi
 
 # List of services to check for active login managers
@@ -569,7 +771,7 @@ options_command+=(
     "zsh" "Install zsh shell with Oh-My-Zsh?" "OFF"
     "pokemon" "Add Pokemon color scripts to your terminal?" "OFF"
     "rog" "Are you installing on Asus ROG laptops?" "OFF"
-    "dots" "Download and install pre-configured KooL Hyprland dotfiles?" "OFF"
+    "dots" "Download and install pre-configured Hyprland dotfiles?" "OFF"
 )
 
 # Capture the selected options before the while loop starts
@@ -619,8 +821,8 @@ else
             fi
         done
         if [[ "$dots_selected" == "OFF" ]]; then
-            if ! whiptail --title "KooL Hyprland Dot Files" --yesno \
-                "You have not selected to install the pre-configured KooL Hyprland dotfiles.\n\nKindly NOTE that if you proceed without Dots, Hyprland will start with default vanilla Hyprland configuration and I won't be able to give you support.\n\nWould you like to continue install without KooL Hyprland Dots or return to choices/options?" \
+            if ! whiptail --title "Kali-Hyprland Dotfiles" --yesno \
+                "You have not selected to install the pre-configured Kali-Hyprland dotfiles.\n\nKindly NOTE that if you proceed without Dots, Hyprland will start with default vanilla Hyprland configuration and support will be limited.\n\nWould you like to continue install without the dotfiles or return to choices/options?" \
                 --yes-button "Continue" --no-button "Return" 15 90; then
                 echo "🔙 Returning to options..." | tee -a "$LOG"
                 continue
@@ -639,7 +841,7 @@ else
             echo "❌ ${SKY_BLUE}You're not 🫵 happy${RESET}. ${YELLOW}Returning to options...${RESET}" | tee -a "$LOG"
             continue
         fi
-        echo "👌 ${OK} You confirmed your choices. Proceeding with ${SKY_BLUE}KooL 🇵🇭 Hyprland Installation...${RESET}" | tee -a "$LOG"
+        echo "👌 ${OK} You confirmed your choices. Proceeding with ${SKY_BLUE}Kali-Hyprland installation...${RESET}" | tee -a "$LOG"
         break
     done
 fi
@@ -673,38 +875,45 @@ if [ "${FETCH_LATEST:-0}" = "1" ] && [ -f ./refresh-hypr-tags.sh ]; then
     ./refresh-hypr-tags.sh
 fi
 
-echo "${INFO} Installing ${SKY_BLUE}KooL Hyprland packages from source...${RESET}" | tee -a "$LOG"
+echo "${INFO} Installing ${SKY_BLUE}Kali-Hyprland packages from source...${RESET}" | tee -a "$LOG"
 sleep 1
 execute_script "01-hypr-pkgs.sh"
+sleep 1
+# Phase order matches the canonical DEFAULT_MODULES in update-hyprland.sh.
+# Foundational libs first (xkbcommon, hyprutils, hyprlang), then protocols,
+# then everything that depends on them, finally hyprland itself.
+execute_script "xkbcommon.sh"
 sleep 1
 execute_script "hyprutils.sh"
 sleep 1
 execute_script "hyprlang.sh"
 sleep 1
-execute_script "hyprcursor.sh"
-sleep 1
-execute_script "hyprwayland-scanner.sh"
-sleep 1
-execute_script "hyprgraphics.sh"
-sleep 1
-execute_script "aquamarine.sh"
-sleep 1
-execute_script "hyprland-qt-support.sh"
-sleep 1
 execute_script "hyprtoolkit.sh"
-sleep 1
-execute_script "hyprland-guiutils.sh"
-sleep 1
-execute_script "hyprland-protocols.sh"
 sleep 1
 # Ensure wayland-protocols (from source) is installed to satisfy Hyprland's >= 1.45 requirement
 execute_script "wayland-protocols-src.sh"
 sleep 1
-execute_script "xkbcommon.sh"
+execute_script "aquamarine.sh"
+sleep 1
+execute_script "hyprgraphics.sh"
+sleep 1
+execute_script "hyprwayland-scanner.sh"
+sleep 1
+execute_script "hyprland-protocols.sh"
+sleep 1
+execute_script "hyprcursor.sh"
+sleep 1
+execute_script "hyprland-qt-support.sh"
+sleep 1
+execute_script "hyprland-guiutils.sh"
 sleep 1
 # Build hyprwire before Hyprland (required by Hyprland >= 0.53)
 execute_script "hyprwire.sh"
 sleep 1
+if [ -f "$script_directory/hyprwire-protocols.sh" ]; then
+    execute_script "hyprwire-protocols.sh"
+    sleep 1
+fi
 execute_script "hyprland.sh"
 sleep 1
 execute_script "hyprpolkitagent.sh"
@@ -848,7 +1057,7 @@ for option in "${options[@]}"; do
         execute_script "rog.sh"
         ;;
     dots)
-        echo "${INFO} Installing pre-configured ${SKY_BLUE}KooL Hyprland dotfiles...${RESET}" | tee -a "$LOG"
+        echo "${INFO} Installing pre-configured ${SKY_BLUE}Kali-Hyprland dotfiles...${RESET}" | tee -a "$LOG"
         execute_script "dotfiles-branch.sh"
         ;;
     *)
@@ -876,10 +1085,62 @@ if [ ! -f "$HOME/.config/fastfetch/debian.png" ]; then
 fi
 
 printf "\n%.0s" {1..2}
+
+# Kali-Hyprland: VMware-guest adaptation runs after dotfiles are deployed so we
+# can wire the vmware.conf drop-in into the user's hyprland UserSettings.conf.
+# vmware.sh internally early-exits if systemd-detect-virt is not "vmware", so
+# this is safe to call unconditionally on bare metal too.
+execute_script "vmware.sh"
+
+# archnexus707 CLI tools (cheat-sheet, power menu, BT/audio/wifi pickers,
+# notification history viewer). Idempotent symlinks into ~/.local/bin/.
+execute_script "cli-tools.sh"
+
+# Apt deps the archnexus-* helpers need (cliphist/grim/slurp/tesseract/
+# brightnessctl/wlsunset/swaylock/kvantum/autorandr/udiskie/inotify/age/fzf/
+# wf-recorder). Grouped + skippable via ARCHNEXUS_SKIP_<GROUP>=1.
+execute_script "optional-deps.sh"
+
+# archnexus707 keybinds (Hyprland) — mirrors the i3 keybinds shipped by
+# D_WM-XFCE so Super+A/B/W/X/V/slash/Print all reach the helpers. Also wires
+# the welcome auto-launch into ~/.zshrc. Idempotent.
+execute_script "archnexus-keybinds.sh"
+
+# archnexus polish — wallpaper-driven palette regen (khypr-palette) and the
+# wlogout power menu with hover-highlight icon tiles. Wires Hyprland keybinds
+# (SUPER+Escape, SUPER+Shift+W) via a UserConfigs drop-in so dotfiles refreshes
+# don't blow them away.
+execute_script "polish-archnexus.sh"
+
 # final check essential packages if it is installed
 execute_script "03-Final-Check.sh"
 
+# OPTIONAL: lofi + anime wallpaper pack (archnexus707 polish). Prompts the
+# user; declining is a clean no-op. Re-runnable any time stand-alone.
+# Track but don't fail the install if it bails — it's truly optional. The
+# previous `|| true` blanket also masked syntax errors and network failures;
+# log the rc so a real bug there isn't completely silent.
+if [ -x "install-scripts/wallpaper-pack.sh" ]; then
+    if ! "install-scripts/wallpaper-pack.sh"; then
+        echo "${WARN} wallpaper-pack.sh returned non-zero (optional phase, continuing)" | tee -a "$LOG"
+    fi
+fi
+
 printf "\n%.0s" {1..1}
+
+# Surface every phase that failed in this run, so a partial install can't pose
+# as a clean one. Aggregate exit code reflects the truth — even if Hyprland's
+# binary happens to be present from a previous run.
+if [ "${#KHYPR_PHASE_FAILURES[@]}" -gt 0 ]; then
+    printf "\n${ERROR} ===== install summary: %d phase(s) FAILED =====\n" "${#KHYPR_PHASE_FAILURES[@]}"
+    printf "${ERROR} failed phases: %s\n" "${KHYPR_PHASE_FAILURES[*]}"
+    printf "${INFO}  log: %s\n" "$LOG"
+    if [ -s "$KHYPR_FAIL_FILE" ]; then
+        printf "${INFO}  failed apt packages (this session): %s\n" "$(tr '\n' ' ' < "$KHYPR_FAIL_FILE")"
+    fi
+    printf "${INFO}  rerun a single phase via: ./install.sh --resume\n"
+    printf "\n%.0s" {1..2}
+fi
 
 # Check if either hyprland or Hyprland files exist in /usr/local/bin/
 if [ -e /usr/local/bin/hyprland ] || [ -f /usr/local/bin/Hyprland ]; then
@@ -888,7 +1149,7 @@ if [ -e /usr/local/bin/hyprland ] || [ -f /usr/local/bin/Hyprland ]; then
     sleep 2
     printf "\n%.0s" {1..2}
 
-    printf "${SKY_BLUE}Thank you${RESET} 🫰 for using 🇵🇭 ${MAGENTA}KooL's Hyprland Dots${RESET}. ${YELLOW}Enjoy and Have a good day!${RESET}"
+    printf "${SKY_BLUE}Thank you${RESET} 🫰 for using ${MAGENTA}archnexus707's Kali-Hyprland${RESET}. ${YELLOW}Enjoy and Have a good day!${RESET}"
     printf "\n%.0s" {1..2}
 
     printf "\n${NOTE} You can start Hyprland by typing ${SKY_BLUE}Hyprland${RESET} (IF SDDM is not installed) (note the capital H!).\n"
@@ -920,6 +1181,13 @@ else
     # Print error message if neither package is installed
     printf "\n${WARN} Hyprland is NOT installed. Please check 00_CHECK-time_installed.log and other files in the Install-Logs/ directory..."
     printf "\n%.0s" {1..3}
+    exit 1
+fi
+
+# Even if Hyprland is installed, fail the process exit if any phase failed.
+# CI / scripts / cron jobs rely on this — a "Thank you" message must not coexist
+# with a non-zero phase failure list.
+if [ "${#KHYPR_PHASE_FAILURES[@]}" -gt 0 ]; then
     exit 1
 fi
 

@@ -66,9 +66,12 @@ force=(
 )
 
 # List of packages to uninstall as it conflicts with swaync or causing swaync to not function properly
+# Kali-Hyprland note: `cargo` was removed from this list. Kali users frequently have
+# Rust-based security tooling (rustscan, feroxbuster builds, etc.) that depends on the
+# system Rust toolchain. The script later installs rustup which provides cargo via
+# ~/.cargo/bin/ anyway, so removing the apt cargo here is both harmful and redundant.
 uninstall=(
     mako
-    cargo
     rofi
     rofi-wayland
 )

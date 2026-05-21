@@ -62,18 +62,33 @@ if command -v zsh >/dev/null; then
       echo "${INFO} Directory zsh-syntax-highlighting already exists. Cloning Skipped." 2>&1 | tee -a "$LOG"
   fi
   
-  # Check if ~/.zshrc and .zprofile exists, create a backup, and copy the new configuration
-  if [ -f "$HOME/.zshrc" ]; then
-      cp -b "$HOME/.zshrc" "$HOME/.zshrc-backup" || true
+  # Check if ~/.zshrc and .zprofile exists, create a backup, and copy the new
+  # configuration. Skip the overwrite if our marker is already present so
+  # repeated installs don't clobber the user's edits to .zshrc.
+  KOOL_MARKER="# KooL-Hyprland-zsh-marker"
+  if [ -f "$HOME/.zshrc" ] && grep -qF "$KOOL_MARKER" "$HOME/.zshrc" 2>/dev/null; then
+      echo "${INFO} ~/.zshrc already contains KooL marker — leaving as-is (set ZSH_FORCE_OVERWRITE=1 to overwrite)" | tee -a "$LOG"
+      if [ "${ZSH_FORCE_OVERWRITE:-0}" = "1" ]; then
+          ts="$(date -u +%Y%m%dT%H%M%SZ)"
+          cp -a "$HOME/.zshrc" "$HOME/.zshrc-backup-$ts" || true
+          [ -f "$HOME/.zprofile" ] && cp -a "$HOME/.zprofile" "$HOME/.zprofile-backup-$ts" || true
+          cp -r 'assets/.zshrc' "$HOME/"
+          cp -r 'assets/.zprofile' "$HOME/"
+          # Stamp the marker so future runs detect it
+          printf '\n%s\n' "$KOOL_MARKER" >> "$HOME/.zshrc"
+      fi
+  else
+      ts="$(date -u +%Y%m%dT%H%M%SZ)"
+      if [ -f "$HOME/.zshrc" ]; then
+          cp -a "$HOME/.zshrc" "$HOME/.zshrc-backup-$ts" || true
+      fi
+      if [ -f "$HOME/.zprofile" ]; then
+          cp -a "$HOME/.zprofile" "$HOME/.zprofile-backup-$ts" || true
+      fi
+      cp -r 'assets/.zshrc' "$HOME/"
+      cp -r 'assets/.zprofile' "$HOME/"
+      printf '\n%s\n' "$KOOL_MARKER" >> "$HOME/.zshrc"
   fi
-
-  if [ -f "$HOME/.zprofile" ]; then
-      cp -b "$HOME/.zprofile" "$HOME/.zprofile-backup" || true
-  fi
-  
-  # Copying the preconfigured zsh themes and profile
-  cp -r 'assets/.zshrc' ~/
-  cp -r 'assets/.zprofile' ~/
 
   # Check if the current shell is zsh
   current_shell=$(basename "$SHELL")
@@ -81,13 +96,27 @@ if command -v zsh >/dev/null; then
     printf "${NOTE} Changing default shell to ${MAGENTA}zsh${RESET}..."
     printf "\n%.0s" {1..2}
 
-    # Loop to ensure the chsh command succeeds
-    while ! chsh -s "$(command -v zsh)"; do
-      echo "${ERROR} Authentication failed. Please enter the correct password." 2>&1 | tee -a "$LOG"
-      sleep 1
-    done
-
-    printf "${INFO} Shell changed successfully to ${MAGENTA}zsh${RESET}" 2>&1 | tee -a "$LOG"
+    # Confirm zsh actually has a usable path BEFORE entering the loop —
+    # otherwise `chsh -s ""` is invalid and the loop would never exit.
+    zsh_path="$(command -v zsh)"
+    if [ -z "$zsh_path" ] || [ ! -x "$zsh_path" ]; then
+        echo "${ERROR} zsh binary not found on PATH; cannot chsh. Skipping default-shell change." | tee -a "$LOG"
+    else
+        chsh_attempts=0
+        chsh_max=5
+        while ! chsh -s "$zsh_path"; do
+          chsh_attempts=$((chsh_attempts + 1))
+          if [ "$chsh_attempts" -ge "$chsh_max" ]; then
+              echo "${ERROR} chsh failed $chsh_max times; giving up. Run later: chsh -s $zsh_path" | tee -a "$LOG"
+              break
+          fi
+          echo "${ERROR} Authentication failed ($chsh_attempts/$chsh_max). Please enter the correct password." 2>&1 | tee -a "$LOG"
+          sleep 1
+        done
+        if [ "$chsh_attempts" -lt "$chsh_max" ]; then
+            printf "${INFO} Shell changed successfully to ${MAGENTA}zsh${RESET}" 2>&1 | tee -a "$LOG"
+        fi
+    fi
   else
     echo "${NOTE} Your shell is already set to ${MAGENTA}zsh${RESET}."
   fi

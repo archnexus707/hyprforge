@@ -33,6 +33,24 @@ if ! source "$(dirname "$(readlink -f "$0")")/Global_functions.sh"; then
   exit 1
 fi
 
+# Kali-Hyprland: hard refusal to run inside a VMware guest. The guest GPU is
+# vmwgfx, not Nvidia. Building an Nvidia DKMS module here would compile against
+# kernel headers and then load against a vmwgfx-backed PCI tree, producing a
+# broken kernel module load at boot or a DKMS build failure. Either way the
+# user wastes time and risks an unbootable VM. Bare metal only.
+case "$(systemd-detect-virt 2>/dev/null || echo none)" in
+  vmware|kvm|qemu|vmware-virtualbox|virtualbox|microsoft|xen)
+    echo -e "${WARN} Detected a virtual machine ($(systemd-detect-virt))."
+    echo -e "${WARN} Nvidia driver/DKMS install is for bare metal only. Skipping."
+    echo -e "${INFO} If you are doing GPU passthrough and know what you're doing,"
+    echo -e "${INFO} run this script with FORCE_NVIDIA_IN_VM=1 to override."
+    if [ "${FORCE_NVIDIA_IN_VM:-0}" != "1" ]; then
+      exit 0
+    fi
+    echo -e "${WARN} FORCE_NVIDIA_IN_VM=1 set — continuing despite VM detection."
+    ;;
+esac
+
 # Set the name of the log file to include the current date and time
 LOG="Install-Logs/install-$(date +%d-%H%M%S)_nvidia.log"
 MLOG="install-$(date +%d-%H%M%S)_nvidia2.log"
@@ -86,10 +104,18 @@ apt_install() {
   if [ "$DRY_RUN" -eq 1 ]; then
     echo "[DRY-RUN] sudo apt-get -s install -y $*"
     sudo apt-get -s install -y "$@" >/dev/null || true
-  else
-    sudo apt install -y "$@" 2>&1 | tee -a "$LOG"
-    record_change "apt install: $*"
+    return 0
   fi
+  # pipefail (set in Global_functions.sh) propagates apt's rc through tee, but
+  # we don't source Global_functions here — set it explicitly so a failed apt
+  # install doesn't get masked by tee's exit 0.
+  set -o pipefail
+  if ! sudo apt install -y "$@" 2>&1 | tee -a "$LOG"; then
+      echo -e "${ERROR} apt install failed for: $*" | tee -a "$LOG"
+      return 1
+  fi
+  record_change "apt install: $*"
+  return 0
 }
 
 apt_remove() {

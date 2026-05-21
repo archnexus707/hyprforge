@@ -1,6 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
-# KooL Debian-Hyprland uninstall script #
+# Kali-Hyprland uninstall script — by archnexus707
 
 clear
 
@@ -24,13 +23,13 @@ printf "\n%.0s" {1..2}
 echo -e "\e[35m
 	╦╔═┌─┐┌─┐╦    ╦ ╦┬ ┬┌─┐┬─┐┬  ┌─┐┌┐┌┌┬┐
 	╠╩╗│ ││ │║    ╠═╣└┬┘├─┘├┬┘│  ├─┤│││ ││ UNINSTALL
-	╩ ╩└─┘└─┘╩═╝  ╩ ╩ ┴ ┴  ┴└─┴─┘┴ ┴┘└┘─┴┘ Debian
+	╩ ╩└─┘└─┘╩═╝  ╩ ╩ ┴ ┴  ┴└─┴─┘┴ ┴┘└┘─┴┘ by archnexus707
 \e[0m"
 printf "\n%.0s" {1..1}
 
 # Show welcome message using whiptail with Yes/No options
-whiptail --title "Debian-Hyprland KooL Dots Uninstall Script" --yesno \
-"Hello! This script will uninstall KooL Hyprland packages and configs.
+whiptail --title "Kali-Hyprland Uninstall Script — by archnexus707" --yesno \
+"Hello! This script will uninstall Kali-Hyprland packages and configs.
 
 You can choose packages and directories you want to remove.
 NOTE: This will remove configs from ~/.config

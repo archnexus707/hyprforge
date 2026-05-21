@@ -1,0 +1,13 @@
+[Unit]
+Description=archnexus707 dotfile live-reload watcher
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/archnexus-watch
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

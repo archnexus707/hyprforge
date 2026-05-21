@@ -1,4 +1,21 @@
 #!/bin/bash
+# ============================================================================
+# DEPRECATED — this script is the ORIGINAL upstream nvidia install path.
+# It is kept ONLY for reference / fallback. install.sh does NOT call it.
+#
+# Use install-scripts/nvidia.sh instead (multi-mode driver source picker,
+# preflight, change recording, recovery hints). nvidia-ori.sh has no preflight
+# and assumes a fixed driver package set — running it on a current Kali system
+# may install conflicting or already-superseded packages.
+#
+# Set ARCHNEXUS_ALLOW_NVIDIA_ORI=1 to bypass this guard if you really need it.
+# ============================================================================
+if [ "${ARCHNEXUS_ALLOW_NVIDIA_ORI:-0}" != "1" ]; then
+    echo "[ERROR] nvidia-ori.sh is deprecated; use nvidia.sh instead." >&2
+    echo "[INFO]  set ARCHNEXUS_ALLOW_NVIDIA_ORI=1 to override." >&2
+    exit 1
+fi
+
 # 💫 https://github.com/JaKooLit 💫 #
 # Nvidia - Check Readme for more details for the drivers #
 # UBUNTU USERS, FOLLOW README!

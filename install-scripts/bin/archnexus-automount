@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# archnexus-automount — start udiskie as a session daemon. Idempotent.
+# Called from compositor autostart (Hyprland exec-once / i3 exec).
+#
+# Drops a notification on mount and symlinks new mount points under
+# ~/Drives/<label-or-uuid>/ for predictable paths.
+
+set -uo pipefail
+
+if ! command -v udiskie >/dev/null 2>&1; then
+    notify-send "archnexus-automount" "udiskie not installed (apt install udiskie)" 2>/dev/null \
+        || echo "udiskie not installed (apt install udiskie)" >&2
+    exit 1
+fi
+
+# Single-instance guard
+pgrep -u "$USER" -x udiskie >/dev/null && exit 0
+
+mkdir -p "$HOME/Drives"
+
+# udiskie flags:
+#   --tray            no taskbar icon (most ricers don't have a tray)
+#   --notify          notify-send on mount/unmount
+#   --automount       mount as soon as drive appears
+#   --no-file-manager don't auto-open thunar — user can chose
+udiskie \
+    --no-tray \
+    --notify \
+    --automount \
+    --no-file-manager \
+    >/dev/null 2>&1 &
+
+disown $! 2>/dev/null || true
+
+# Add a one-shot watcher that symlinks new mounts into ~/Drives/
+(
+    while true; do
+        for mp in /run/media/"$USER"/*; do
+            [ -d "$mp" ] || continue
+            name="$(basename "$mp")"
+            link="$HOME/Drives/$name"
+            [ -L "$link" ] && continue
+            ln -sfn "$mp" "$link"
+        done
+        # Prune stale links
+        for link in "$HOME/Drives/"*; do
+            [ -L "$link" ] || continue
+            target="$(readlink "$link")"
+            [ -d "$target" ] || rm -f "$link"
+        done
+        sleep 5
+    done
+) &
+disown $! 2>/dev/null || true
+
+exit 0
