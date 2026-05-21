@@ -1,0 +1,42 @@
+
+  D_WM stack — keybinds & notes
+  by archnexus707
+
+  Key shortcuts (i3 keybinds — D_WM stack)
+
+  ┌──────────────────┬──────────────────────────┐
+  │       Key        │          Action          │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+Enter      │ kitty                    │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+R          │ rofi launcher            │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+Tab        │ rofi window switcher     │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+E          │ thunar                   │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+Q          │ close window             │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+F          │ fullscreen               │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+1..9       │ switch workspace         │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+SHIFT+1..9 │ move window to workspace │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+h/j/k/l    │ focus window             │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+SHIFT+E    │ logout/lock/reboot menu  │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+SHIFT+T    │ theme picker             │
+  ├──────────────────┼──────────────────────────┤
+  │ Print            │ flameshot screenshot     │
+  └──────────────────┴──────────────────────────┘
+
+  What's intentionally NOT shipped (add later if you want)
+
+  - No wallpaper image — ~/.config/i3/wallpaper.sh falls back to solid color. Drop a wallpaper.png into ~/.config/i3/ and it'll show.
+  - p10k not pre-configured — first interactive zsh launch will run p10k configure (about 2 min of prompts).
+  - xfce4-panel keeps its default look — adding a custom panel XML or replacing with polybar is a future polish task.
+  - No animated wallpapers — anime loops need xwinwrap + mpv, deferred to a future install script.
+
+  ─ archnexus707 · forged for the rebels of the terminal ─

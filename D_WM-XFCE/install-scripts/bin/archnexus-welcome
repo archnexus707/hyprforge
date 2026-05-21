@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# archnexus-welcome — one-time post-install tour shown on first shell open.
+# Sentinel: ~/.cache/archnexus/welcomed. Re-run with --reset to force again.
+
+set -uo pipefail
+
+SENTINEL="${ARCHNEXUS_WELCOME_SENTINEL:-$HOME/.cache/archnexus/welcomed}"
+
+if [ "${1:-}" = "--reset" ]; then
+    rm -f "$SENTINEL"
+    echo "welcome sentinel cleared; tour will replay on next login."
+    exit 0
+fi
+
+if [ "${1:-}" != "--force" ] && [ -f "$SENTINEL" ]; then
+    exit 0   # already seen
+fi
+
+mkdir -p "$(dirname "$SENTINEL")"
+
+# Try fastfetch first; fallback to plain banner.
+if command -v fastfetch >/dev/null 2>&1; then
+    fastfetch || true
+elif command -v neofetch >/dev/null 2>&1; then
+    neofetch || true
+fi
+
+# Render in brand mint (#00ff9c) when stdout is a TTY; plain text otherwise.
+if [ -t 1 ]; then printf '\e[38;2;0;255;156m'; fi
+cat <<'EOF'
+
+   ╔════════════════════════════════════════════════════════════════════════╗
+   ║                                                                        ║
+   ║     Welcome to archnexus707's rice — built for the rebels.             ║
+   ║                                                                        ║
+   ║   Quick tour:                                                          ║
+   ║                                                                        ║
+   ║     ✦ Themes      → archnexus-theme <name>     (catppuccin/tokyo/...)  ║
+   ║     ✦ Wallpapers  → ~/Pictures/Wallpapers/{lofi,anime}/                ║
+   ║     ✦ Hotkeys     → Super+? for a live cheat-sheet                     ║
+   ║     ✦ Power menu  → Super+X                                            ║
+   ║     ✦ Wi-Fi       → archnexus-wifi   (or Super+W)                      ║
+   ║     ✦ Bluetooth   → archnexus-bt     (or Super+B)                      ║
+   ║     ✦ Audio       → archnexus-audio  (or Super+A)                      ║
+   ║     ✦ Diagnostic  → ./doctor.sh   (run from the project root)          ║
+   ║     ✦ Resume      → ./install.sh --resume  (continues a failed run)    ║
+   ║                                                                        ║
+   ║   Local override: ~/.config/archnexus/local.preset  (per-machine)      ║
+   ║   Custom hooks:   install-scripts/hooks/             (pre-/post-phase) ║
+   ║                                                                        ║
+   ║   Re-run this tour any time:   archnexus-welcome --force               ║
+   ║                                                                        ║
+   ╚════════════════════════════════════════════════════════════════════════╝
+
+EOF
+if [ -t 1 ]; then printf '\e[0m'; fi
+
+touch "$SENTINEL"

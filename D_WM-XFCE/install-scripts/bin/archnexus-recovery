@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# archnexus-recovery — find the project root's recovery.sh and exec it.
+# The project root is the directory containing install.sh (this script lives
+# in install-scripts/bin/ and is symlinked into ~/.local/bin/).
+
+set -uo pipefail
+
+# Resolve the symlink to find where this file truly lives.
+self="$(readlink -f "${BASH_SOURCE[0]}")"
+proj_root="$(cd "$(dirname "$self")/../.." && pwd)"
+
+if [ -x "$proj_root/recovery.sh" ]; then
+    cd "$proj_root" || exit 1
+    exec ./recovery.sh "$@"
+fi
+
+echo "archnexus-recovery: recovery.sh not found at $proj_root" >&2
+exit 1

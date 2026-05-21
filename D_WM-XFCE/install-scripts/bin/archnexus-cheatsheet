@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+# archnexus-cheatsheet — render the active compositor's keybinds as a rofi/wofi
+# grid. Auto-detects i3 vs Hyprland by which config file exists.
+#
+# Usage:  archnexus-cheatsheet            (interactive picker)
+#         archnexus-cheatsheet --raw       (dump to stdout, no picker)
+#
+# Bind it: Hyprland → bind=SUPER,slash,exec,archnexus-cheatsheet
+#          i3       → bindsym $mod+slash exec --no-startup-id archnexus-cheatsheet
+
+set -uo pipefail
+
+_pick() {
+    if command -v rofi >/dev/null 2>&1; then
+        rofi -dmenu -p "  Cheat-sheet" -i -no-custom -theme-str 'window {width: 60%; border: 2px solid; border-color: #00ff9c;} element selected {background-color: #00ff9c; text-color: #0a0a0a;} prompt {text-color: #00ff9c;}'
+    elif command -v wofi >/dev/null 2>&1; then
+        wofi --dmenu --prompt "Cheat-sheet" --insensitive
+    elif command -v fzf >/dev/null 2>&1; then
+        fzf
+    else
+        cat   # fall back: just dump
+    fi
+}
+
+_parse_hyprland() {
+    local conf="$HOME/.config/hypr/hyprland.conf"
+    [ -f "$conf" ] || return 1
+    # Hyprland configs almost always split keybinds across UserConfigs/*.conf
+    # via `source = …` directives. Recursively expand them into one buffer
+    # before awk-parsing. Cycle-protected; tilde- and $HOME-expanded.
+    _expand_hypr() {
+        local f="$1"
+        # Hyprland accepts `~/...` and literal `$HOME/...` in source = paths.
+        # Bash parameter expansion (${f#~/}) does NOT tilde-expand a leading
+        # ~, so use regex match + substitution explicitly.
+        if [[ "$f" =~ ^~(/.*)$ ]]; then
+            f="$HOME${BASH_REMATCH[1]}"
+        elif [[ "$f" =~ ^\$HOME(/.*)$ ]]; then
+            f="$HOME${BASH_REMATCH[1]}"
+        fi
+        [ -f "$f" ] || return 0
+        # ${_SEEN[$f]+1} expands to "1" if $f is already in the seen-set
+        # (associative array), preventing recursive loops.
+        [ -n "${_SEEN[$f]+1}" ] && return 0
+        _SEEN[$f]=1
+        local line src
+        while IFS= read -r line; do
+            if [[ "$line" =~ ^[[:space:]]*source[[:space:]]*=[[:space:]]*(.+)$ ]]; then
+                src="${BASH_REMATCH[1]}"
+                # strip trailing whitespace / comments
+                src="${src%%#*}"
+                src="${src%"${src##*[![:space:]]}"}"
+                _expand_hypr "$src"
+            else
+                printf '%s\n' "$line"
+            fi
+        done < "$f"
+    }
+    declare -A _SEEN=()
+    _expand_hypr "$conf" | awk '
+        /^[[:space:]]*bind[lemtr]*[[:space:]]*=/ {
+            sub(/^[[:space:]]*bind[lemtr]*[[:space:]]*=[[:space:]]*/,"")
+            n = split($0, a, ",")
+            mod = a[1]; key = a[2]; cmd = a[3]
+            for (i = 4; i <= n; i++) cmd = cmd " " a[i]
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", mod)
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", key)
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", cmd)
+            label = mod
+            if (label != "" && key != "") label = label "+" key; else label = label key
+            printf "  %-25s  →  %s\n", label, cmd
+        }
+    '
+}
+
+_parse_i3() {
+    local conf="$HOME/.config/i3/config"
+    [ -f "$conf" ] || return 1
+    awk '
+        /^[[:space:]]*set[[:space:]]+\$/ {
+            sub(/^[[:space:]]*set[[:space:]]+/,"")
+            split($0, a, /[[:space:]]+/)
+            vars[a[1]] = substr($0, index($0, a[2]))
+            next
+        }
+        /^[[:space:]]*bindsym[[:space:]]/ {
+            sub(/^[[:space:]]*bindsym[[:space:]]+/,"")
+            split($0, a, /[[:space:]]+/)
+            keys = a[1]
+            cmd = substr($0, index($0, a[2]))
+            # substitute vars like $mod
+            for (v in vars) gsub("\\" v, vars[v], keys)
+            printf "  %-25s  →  %s\n", keys, cmd
+        }
+    ' "$conf"
+}
+
+main() {
+    local raw=""
+    [ "${1:-}" = "--raw" ] && raw=1
+
+    local out
+    if [ -f "$HOME/.config/hypr/hyprland.conf" ]; then
+        out=$(_parse_hyprland)
+    elif [ -f "$HOME/.config/i3/config" ]; then
+        out=$(_parse_i3)
+    else
+        echo "no Hyprland or i3 config found" >&2
+        exit 1
+    fi
+
+    if [ -z "$out" ]; then
+        echo "no keybinds extracted" >&2
+        exit 1
+    fi
+
+    if [ -n "$raw" ]; then
+        printf '%s\n' "$out"
+    else
+        printf '%s\n' "$out" | _pick >/dev/null
+    fi
+}
+
+main "$@"
