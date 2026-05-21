@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+# archnexus-shot — screenshot. Auto-picks tooling per compositor.
+#
+# Modes:
+#   region     prompt user to drag a region (default)
+#   window     active window only
+#   screen     full screen
+#   --edit     post-process through swappy (Wayland) or pinta (X11)
+#   --clip     also copy to clipboard
+#
+# Bind it: Print → archnexus-shot region
+#          Super+Print → archnexus-shot screen
+#          Shift+Print → archnexus-shot region --edit
+
+set -uo pipefail
+
+mode="region"
+edit=0
+clip=0
+for a in "$@"; do
+    case "$a" in
+        region|window|screen) mode="$a" ;;
+        --edit) edit=1 ;;
+        --clip) clip=1 ;;
+        -h|--help)
+            cat <<EOF
+usage: archnexus-shot [region|window|screen] [--edit] [--clip]
+EOF
+            exit 0 ;;
+    esac
+done
+
+OUT_DIR="${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
+mkdir -p "$OUT_DIR"
+TS=$(date +%Y-%m-%d_%H-%M-%S)
+OUT="$OUT_DIR/screenshot-${TS}.png"
+
+_is_wayland() {
+    [ -n "${WAYLAND_DISPLAY:-}" ] || [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]
+}
+
+# Verify there's a graphical session at all. archnexus-shot is useless from
+# a TTY or over ssh without DISPLAY forwarding.
+if [ -z "${DISPLAY:-}" ] && ! _is_wayland; then
+    msg="archnexus-shot needs a graphical session (DISPLAY or WAYLAND_DISPLAY). Run from inside Hyprland, an i3 session, or XFCE."
+    printf 'archnexus-shot: %s\n' "$msg" >&2
+    notify-send "archnexus-shot" "$msg" 2>/dev/null || true
+    exit 1
+fi
+
+_install_hint() {
+    printf 'archnexus-shot: missing %s — install with:\n  cd <project root> && ./install-scripts/optional-deps.sh\n' "$1" >&2
+}
+
+if _is_wayland; then
+    case "$mode" in
+        region)
+            command -v grim  >/dev/null || { _install_hint grim;  exit 1; }
+            command -v slurp >/dev/null || { _install_hint slurp; exit 1; }
+            grim -g "$(slurp)" "$OUT" ;;
+        window)
+            command -v hyprctl >/dev/null || { _install_hint "hyprctl (needs Hyprland)"; exit 1; }
+            command -v grim    >/dev/null || { _install_hint grim; exit 1; }
+            g=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
+            grim -g "$g" "$OUT" ;;
+        screen)
+            command -v grim >/dev/null || { _install_hint grim; exit 1; }
+            grim "$OUT" ;;
+    esac
+    if [ "$edit" = "1" ] && command -v swappy >/dev/null 2>&1; then
+        swappy -f "$OUT" -o "$OUT"
+    fi
+    if [ "$clip" = "1" ] && command -v wl-copy >/dev/null 2>&1; then
+        wl-copy --type image/png < "$OUT"
+    fi
+else
+    # X11
+    if command -v flameshot >/dev/null 2>&1; then
+        case "$mode" in
+            region) flameshot gui -p "$OUT_DIR" ;;
+            screen) flameshot full -p "$OUT_DIR" ;;
+            window) flameshot screen -p "$OUT_DIR" ;;
+        esac
+    elif command -v maim >/dev/null 2>&1; then
+        case "$mode" in
+            region) maim -s "$OUT" ;;
+            window) maim -i "$(xdotool getactivewindow)" "$OUT" ;;
+            screen) maim "$OUT" ;;
+        esac
+        [ "$clip" = "1" ] && xclip -selection clipboard -t image/png -i "$OUT"
+    else
+        _install_hint "flameshot or maim"
+        exit 1
+    fi
+fi
+
+notify-send "Screenshot" "saved to $OUT" 2>/dev/null || echo "saved: $OUT"
