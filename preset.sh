@@ -1,4 +1,4 @@
-# 💫 https://github.com/JaKooLit 💫 #
+# Kali-Hyprland preset — by archnexus707
 
 # Define the options you want to preselect (either ON or OFF)
 # IMPORTANT: answer should be inside ""

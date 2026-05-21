@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# archnexus-power — rofi/wofi power menu: lock / logout / suspend / restart / shutdown.
+# Auto-picks the right backend (hyprlock / swaylock / i3lock).
+#
+# Bind it: Hyprland → bind=SUPER,x,exec,archnexus-power
+#          i3       → bindsym $mod+x exec --no-startup-id archnexus-power
+
+set -uo pipefail
+
+# Pick picker
+_pick() {
+    if   command -v rofi >/dev/null 2>&1; then rofi -dmenu -p "⏻ Power" -i -theme-str 'window {width: 25%; border: 2px solid; border-color: #00ff9c;} listview {lines: 6;} element selected {background-color: #00ff9c; text-color: #0a0a0a;} prompt {text-color: #00ff9c;}'
+    elif command -v wofi >/dev/null 2>&1; then wofi --dmenu --prompt "Power" --width 320
+    else fzf
+    fi
+}
+
+_lock_cmd() {
+    if   command -v hyprlock  >/dev/null 2>&1; then echo "hyprlock"
+    elif command -v swaylock  >/dev/null 2>&1; then echo "swaylock -f"
+    elif command -v i3lock    >/dev/null 2>&1; then echo "i3lock -c 1e1e2e"
+    elif command -v xss-lock  >/dev/null 2>&1; then echo "loginctl lock-session"
+    else echo ""
+    fi
+}
+
+_confirm() {
+    local prompt="$1"
+    local ans
+    ans=$(printf 'no\nyes\n' | _pick)
+    [ "$ans" = "yes" ]
+}
+
+main() {
+    local choice
+    choice=$(printf '🔒 Lock\n💤 Suspend\n🚪 Logout\n🔁 Restart\n⏻  Shutdown\n💀 Hibernate\n❌ Cancel\n' | _pick)
+    case "$choice" in
+        *Lock*)
+            local lc; lc=$(_lock_cmd)
+            if [ -n "$lc" ]; then eval "$lc"; else notify-send "archnexus-power" "no lock backend found (install hyprlock/swaylock/i3lock)"; fi ;;
+        *Suspend*)
+            systemctl suspend ;;
+        *Hibernate*)
+            _confirm "Hibernate? (no/yes)" && systemctl hibernate ;;
+        *Logout*)
+            _confirm "Logout? (no/yes)" || exit 0
+            if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+                hyprctl dispatch exit
+            elif pgrep -x i3 >/dev/null; then
+                i3-msg exit
+            else
+                loginctl terminate-user "$USER"
+            fi ;;
+        *Restart*)
+            _confirm "Restart? (no/yes)" && systemctl reboot ;;
+        *Shutdown*)
+            _confirm "Shutdown? (no/yes)" && systemctl poweroff ;;
+        *) exit 0 ;;
+    esac
+}
+
+main "$@"

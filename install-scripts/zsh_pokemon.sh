@@ -28,10 +28,31 @@ if [ -d "$SRC_DIR" ]; then
     cd "$SRC_DIR" && sudo ./install.sh && cd ..
 fi
 
-# Check if ~/.zshrc exists
+# Check if ~/.zshrc exists. Both sed substitutions must succeed AND the
+# expected patterns must actually be present in the file — a sed -i that finds
+# no match silently no-ops, which previously left zsh_pokemon "complete" while
+# doing nothing. We grep first and report; sed failures abort the phase.
 if [ -f "$HOME/.zshrc" ]; then
-	sed -i 's|^#pokemon-colorscripts --no-title -s -r \| fastfetch -c \$HOME/.config/fastfetch/config-pokemon.jsonc --logo-type file-raw --logo-height 10 --logo-width 5 --logo -|pokemon-colorscripts --no-title -s -r \| fastfetch -c \$HOME/.config/fastfetch/config-pokemon.jsonc --logo-type file-raw --logo-height 10 --logo-width 5 --logo -|' "$HOME/.zshrc" >> "$LOG" 2>&1
-	sed -i "s|^fastfetch -c \$HOME/.config/fastfetch/config-compact.jsonc|#fastfetch -c \$HOME/.config/fastfetch/config-compact.jsonc|" "$HOME/.zshrc" >> "$LOG" 2>&1
+    pokemon_pat='^#pokemon-colorscripts --no-title -s -r '
+    fastfetch_pat='^fastfetch -c $HOME/.config/fastfetch/config-compact.jsonc'
+
+    if grep -qF "${pokemon_pat#^}" "$HOME/.zshrc" 2>/dev/null; then
+        if ! sed -i 's|^#pokemon-colorscripts --no-title -s -r \| fastfetch -c \$HOME/.config/fastfetch/config-pokemon.jsonc --logo-type file-raw --logo-height 10 --logo-width 5 --logo -|pokemon-colorscripts --no-title -s -r \| fastfetch -c \$HOME/.config/fastfetch/config-pokemon.jsonc --logo-type file-raw --logo-height 10 --logo-width 5 --logo -|' "$HOME/.zshrc" >> "$LOG" 2>&1; then
+            echo "${ERROR} sed failed to enable pokemon-colorscripts line in ~/.zshrc" | tee -a "$LOG"
+            exit 1
+        fi
+    else
+        echo "${WARN} pokemon-colorscripts marker not found in ~/.zshrc — assets/.zshrc may be out of sync" | tee -a "$LOG"
+    fi
+
+    if grep -qF "${fastfetch_pat#^}" "$HOME/.zshrc" 2>/dev/null; then
+        if ! sed -i "s|^fastfetch -c \$HOME/.config/fastfetch/config-compact.jsonc|#fastfetch -c \$HOME/.config/fastfetch/config-compact.jsonc|" "$HOME/.zshrc" >> "$LOG" 2>&1; then
+            echo "${ERROR} sed failed to comment fastfetch line in ~/.zshrc" | tee -a "$LOG"
+            exit 1
+        fi
+    else
+        echo "${WARN} fastfetch compact line not found in ~/.zshrc — leaving as-is" | tee -a "$LOG"
+    fi
 else
     echo "$HOME/.zshrc not found. Cant enable ${YELLOW}Pokemon color scripts${RESET}" >> "$LOG" 2>&1
 fi

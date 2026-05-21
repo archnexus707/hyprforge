@@ -36,7 +36,12 @@ printf "${NOTE} Installing ${SKY_BLUE}Thunar${RESET} Packages...\n\n"
 printf "\n%.0s" {1..1}
 
  # Check for existing configs and copy if does not exist
-for DIR1 in gtk-3.0 Thunar xfce4; do
+ # Kali-Hyprland: `xfce4` was removed from this loop. On Kali, XFCE is the
+ # default desktop and ~/.config/xfce4 contains the user's actual panel
+ # layout, keybinds and wallpaper. Overwriting it (even with the existence
+ # guard) is risky because the assets dir is built for a stripped-down XFCE.
+ # Hyprland does not need ~/.config/xfce4 to function.
+for DIR1 in gtk-3.0 Thunar; do
   DIRPATH=~/.config/$DIR1
   if [ -d "$DIRPATH" ]; then
     echo -e "${NOTE} Config for ${MAGENTA}$DIR1${RESET} found, no need to copy." 2>&1 | tee -a "$LOG"

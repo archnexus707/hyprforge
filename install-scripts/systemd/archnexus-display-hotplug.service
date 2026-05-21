@@ -1,0 +1,8 @@
+[Unit]
+Description=archnexus707 display hot-plug responder
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+# Debounce a touch then re-apply the layout.
+ExecStart=/bin/sh -c "sleep 1 && %h/.local/bin/archnexus-display auto"

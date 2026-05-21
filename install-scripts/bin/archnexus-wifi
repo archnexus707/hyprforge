@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# archnexus-wifi — NetworkManager Wi-Fi picker via rofi/wofi.
+# Lists nearby SSIDs, connects on selection, prompts for password if needed.
+#
+# Bind it: Super+W
+
+set -uo pipefail
+
+if ! command -v nmcli >/dev/null 2>&1; then
+    echo "nmcli not installed (apt install network-manager)" >&2
+    exit 1
+fi
+
+_pick() {
+    if   command -v rofi >/dev/null 2>&1; then rofi -dmenu -p "  Wi-Fi" -i -theme-str 'window {width: 50%; border: 2px solid; border-color: #00ff9c;} element selected {background-color: #00ff9c; text-color: #0a0a0a;} prompt {text-color: #00ff9c;}'
+    elif command -v wofi >/dev/null 2>&1; then wofi --dmenu --prompt "Wi-Fi"
+    else fzf
+    fi
+}
+_password() {
+    if   command -v rofi >/dev/null 2>&1; then rofi -dmenu -password -p "Password"
+    elif command -v wofi >/dev/null 2>&1; then wofi --dmenu --prompt "Password" --password
+    else read -srp "Password: " p; printf '%s' "$p"
+    fi
+}
+
+# Rescan, then list SSID/SIGNAL/SECURITY
+nmcli device wifi rescan 2>/dev/null || true
+mapfile -t lines < <(nmcli --terse --fields IN-USE,SSID,SIGNAL,SECURITY device wifi list 2>/dev/null | awk -F: '
+    $2 != "" { in_use=$1; ssid=$2; sig=$3; sec=$4
+               star = (in_use == "*") ? "● " : "  "
+               printf "%s%-32s %3s%% %s\n", star, ssid, sig, sec
+    }
+' | sort -u)
+
+if [ "${#lines[@]}" -eq 0 ]; then
+    notify-send "archnexus-wifi" "no networks found" 2>/dev/null || echo "no networks found" >&2
+    exit 1
+fi
+
+choice=$(printf '%s\n' "${lines[@]}" | _pick)
+[ -z "$choice" ] && exit 0
+
+ssid=$(echo "$choice" | sed 's/^[● ] *//' | awk '{$NF=""; sub(/ +$/,""); $NF=""; sub(/ +$/,""); print}' | sed 's/  *$//')
+[ -z "$ssid" ] && exit 0
+
+# If we already know the connection, just up it; otherwise prompt for pw.
+if nmcli --terse --fields NAME connection show | grep -qxF "$ssid"; then
+    nmcli connection up "$ssid"
+else
+    pw=$(_password)
+    if [ -n "$pw" ]; then
+        nmcli device wifi connect "$ssid" password "$pw"
+    else
+        nmcli device wifi connect "$ssid"
+    fi
+fi

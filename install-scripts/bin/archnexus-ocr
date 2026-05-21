@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# archnexus-ocr — grab a region, OCR it via tesseract, copy text to clipboard.
+#
+# Bind it: Super+Shift+T
+
+set -uo pipefail
+
+_is_wayland() { [ -n "${WAYLAND_DISPLAY:-}" ] || [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; }
+
+# Env preflight — OCR needs a graphical session to grab a region.
+if [ -z "${DISPLAY:-}" ] && ! _is_wayland; then
+    msg="archnexus-ocr needs a graphical session (DISPLAY or WAYLAND_DISPLAY). Run from Hyprland, i3, or XFCE."
+    printf 'archnexus-ocr: %s\n' "$msg" >&2
+    notify-send "archnexus-ocr" "$msg" 2>/dev/null || true
+    exit 1
+fi
+
+if ! command -v tesseract >/dev/null 2>&1; then
+    msg="tesseract-ocr missing — install via ./install-scripts/optional-deps.sh (group: OCR)"
+    printf 'archnexus-ocr: %s\n' "$msg" >&2
+    notify-send "archnexus-ocr" "$msg" 2>/dev/null || true
+    exit 1
+fi
+
+LANG_PACK="${ARCHNEXUS_OCR_LANG:-eng}"
+TMP="$(mktemp --suffix=.png)"
+trap 'rm -f "$TMP" "${TMP%.png}.txt"' EXIT
+
+if _is_wayland; then
+    command -v grim  >/dev/null || { echo "archnexus-ocr: install grim  (./install-scripts/optional-deps.sh)"  >&2; exit 1; }
+    command -v slurp >/dev/null || { echo "archnexus-ocr: install slurp (./install-scripts/optional-deps.sh)" >&2; exit 1; }
+    grim -g "$(slurp)" "$TMP"
+elif command -v maim >/dev/null 2>&1; then
+    maim -s "$TMP"
+elif command -v flameshot >/dev/null 2>&1; then
+    flameshot gui -r >"$TMP"
+else
+    echo "archnexus-ocr: no screenshot tool — install grim+slurp / maim / flameshot via ./install-scripts/optional-deps.sh" >&2
+    exit 1
+fi
+
+[ -s "$TMP" ] || { notify-send "archnexus-ocr" "no region captured"; exit 0; }
+
+# Tesseract writes to <basename>.txt
+tesseract "$TMP" "${TMP%.png}" -l "$LANG_PACK" 2>/dev/null
+text="$(cat "${TMP%.png}.txt" 2>/dev/null)"
+
+if [ -z "$text" ]; then
+    notify-send "archnexus-ocr" "no text recognised"
+    exit 0
+fi
+
+if _is_wayland && command -v wl-copy >/dev/null 2>&1; then
+    printf '%s' "$text" | wl-copy
+elif command -v xclip >/dev/null 2>&1; then
+    printf '%s' "$text" | xclip -i -selection clipboard
+elif command -v xsel >/dev/null 2>&1; then
+    printf '%s' "$text" | xsel -b -i
+fi
+
+notify-send "archnexus-ocr" "$(printf '%s' "$text" | head -c 100)…" 2>/dev/null || \
+    printf '%s\n' "$text"

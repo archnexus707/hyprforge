@@ -40,24 +40,37 @@ printf "\n%.0s" {1..2}
 DOWNLOAD_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz"
 # Maximum number of download attempts
 MAX_ATTEMPTS=2
+JETBRAINS_OK=0
 for ((ATTEMPT = 1; ATTEMPT <= MAX_ATTEMPTS; ATTEMPT++)); do
-    curl -OL "$DOWNLOAD_URL" 2>&1 | tee -a "$LOG" && break
-    echo "Download ${YELLOW}DOWNLOAD_URL${RESET} attempt $ATTEMPT failed. Retrying in 2 seconds..." 2>&1 | tee -a "$LOG"
+    if curl -OL "$DOWNLOAD_URL" 2>&1 | tee -a "$LOG"; then
+        JETBRAINS_OK=1
+        break
+    fi
+    echo "Download ${YELLOW}$DOWNLOAD_URL${RESET} attempt $ATTEMPT failed. Retrying in 2 seconds..." 2>&1 | tee -a "$LOG"
     sleep 2
 done
 
-# Check if the JetBrainsMono directory exists and delete it if it does
-if [ -d ~/.local/share/fonts/JetBrainsMonoNerd ]; then
-    rm -rf ~/.local/share/fonts/JetBrainsMonoNerd 2>&1 | tee -a "$LOG"
+# Only proceed with extract if download actually succeeded — otherwise tar
+# would operate on a missing or partial file and write a confusing error.
+if [ "$JETBRAINS_OK" -eq 1 ] && [ -f JetBrainsMono.tar.xz ]; then
+    # Check if the JetBrainsMono directory exists and delete it if it does
+    if [ -d ~/.local/share/fonts/JetBrainsMonoNerd ]; then
+        rm -rf ~/.local/share/fonts/JetBrainsMonoNerd 2>&1 | tee -a "$LOG"
+    fi
+
+    mkdir -p ~/.local/share/fonts/JetBrainsMonoNerd 2>&1 | tee -a "$LOG"
+    # Extract the new files into the JetBrainsMono directory and log the output
+    tar -xJkf JetBrainsMono.tar.xz -C ~/.local/share/fonts/JetBrainsMonoNerd 2>&1 | tee -a "$LOG"
+else
+    echo -e "\n${ERROR} JetBrainsMono Nerd Font download failed after $MAX_ATTEMPTS attempts; skipping extract.${RESET}\n" 2>&1 | tee -a "$LOG"
 fi
 
-mkdir -p ~/.local/share/fonts/JetBrainsMonoNerd 2>&1 | tee -a "$LOG"
-# Extract the new files into the JetBrainsMono directory and log the output
-tar -xJkf JetBrainsMono.tar.xz -C ~/.local/share/fonts/JetBrainsMonoNerd 2>&1 | tee -a "$LOG"
-
-# Fantasque Mono Nerd Font
+# Fantasque Mono Nerd Font (both mkdir target and unzip target must use the
+# same FantasqueSansMonoNerd path — doctor/dotfiles look for it there).
 if wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/FantasqueSansMono.zip; then
-    mkdir -p "$HOME/.local/share/fonts/FantasqueSansMonoNerd" && unzip -o -q "FantasqueSansMono.zip" -d "$HOME/.local/share/fonts/FantasqueSansMono" && echo "FantasqueSansMono installed successfully" | tee -a "$LOG"
+    mkdir -p "$HOME/.local/share/fonts/FantasqueSansMonoNerd" && \
+        unzip -o -q "FantasqueSansMono.zip" -d "$HOME/.local/share/fonts/FantasqueSansMonoNerd" && \
+        echo "FantasqueSansMono installed successfully" | tee -a "$LOG"
 else
     echo -e "\n${ERROR} Failed to download ${YELLOW}Fantasque Sans Mono Nerd Font${RESET} Please check your connection\n" | tee -a "$LOG"
 fi
@@ -72,9 +85,15 @@ fi
 # Update font cache and log the output
 fc-cache -v 2>&1 | tee -a "$LOG"
 
-# clean up 
-if [ -d "JetBrainsMono.tar.xz" ]; then
-	rm -r JetBrainsMono.tar.xz 2>&1 | tee -a "$LOG"
+# clean up (the tarball is a file, not a directory)
+if [ -f "JetBrainsMono.tar.xz" ]; then
+	rm -f JetBrainsMono.tar.xz 2>&1 | tee -a "$LOG"
+fi
+if [ -f "FantasqueSansMono.zip" ]; then
+	rm -f FantasqueSansMono.zip 2>&1 | tee -a "$LOG"
+fi
+if [ -f "VictorMonoAll.zip" ]; then
+	rm -f VictorMonoAll.zip 2>&1 | tee -a "$LOG"
 fi
 
 printf "\n%.0s" {1..2}

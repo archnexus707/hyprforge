@@ -30,6 +30,16 @@ uninstall=(
   Hyprland
 )
 
+# Kali-Hyprland addition: portal implementations that conflict with
+# xdg-desktop-portal-hyprland. If both are installed, the wrong one usually
+# wins at session start and screen sharing / file pickers break under Hyprland.
+# These are removed with a confirmation prompt because removing them affects
+# file dialogs in the user's original XFCE session.
+xdph_conflicts=(
+  xdg-desktop-portal-xfce
+  xdg-desktop-portal-gtk
+)
+
 ## WARNING: DO NOT EDIT BEYOND THIS LINE IF YOU DON'T KNOW WHAT YOU ARE DOING! ##
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -74,6 +84,31 @@ done
 
 if [ $overall_failed -ne 0 ]; then
   echo -e "${ERROR} Some packages failed to uninstall. Please check the log."
+fi
+
+# Kali-Hyprland: remove conflicting XDG portal implementations with confirmation.
+# These ship with Kali's XFCE default and will fight xdph at Hyprland session start.
+xdph_present=0
+for pkg in "${xdph_conflicts[@]}"; do
+  if dpkg -l 2>/dev/null | awk '{print $2}' | grep -qx "$pkg"; then
+    xdph_present=1
+    break
+  fi
+done
+
+if [ "$xdph_present" -eq 1 ]; then
+  echo -e "${WARN} XFCE XDG portal implementations detected (${xdph_conflicts[*]})."
+  echo -e "${NOTE} These conflict with xdg-desktop-portal-hyprland and must be removed"
+  echo -e "       for screen-share and file dialogs to work correctly under Hyprland."
+  echo -e "${NOTE} They will be reinstallable later via apt if you return to XFCE."
+  read -rp "Remove conflicting XDG portals now? [yes/NO]: " ans
+  if [ "$ans" = "yes" ]; then
+    for pkg in "${xdph_conflicts[@]}"; do
+      uninstall_package "$pkg" 2>&1 | tee -a "$LOG" || true
+    done
+  else
+    echo -e "${NOTE} Skipped XDG portal cleanup. You may experience portal conflicts."
+  fi
 fi
 
 printf "\n%.0s" {1..1}
