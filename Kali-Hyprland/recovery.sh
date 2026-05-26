@@ -118,7 +118,7 @@ _main() {
         _menu
         read -rp "  Choice: " choice
         case "${choice,,}" in
-            1) ./install.sh --resume ;;
+            1) "$SCRIPT_DIR/install.sh" --resume ;; 
             2) ./doctor.sh ;;
             3) _choose_snapshot_target ;;
             4) "${EDITOR:-nano}" "$HOME/.config/hypr/hyprland.conf" ;;

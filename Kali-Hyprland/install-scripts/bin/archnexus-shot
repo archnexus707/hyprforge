@@ -61,6 +61,7 @@ if _is_wayland; then
         window)
             command -v hyprctl >/dev/null || { _install_hint "hyprctl (needs Hyprland)"; exit 1; }
             command -v grim    >/dev/null || { _install_hint grim; exit 1; }
+            command -v jq      >/dev/null || { _install_hint "jq (required for window screenshots)"; exit 1; }
             g=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
             grim -g "$g" "$OUT" ;;
         screen)
@@ -87,7 +88,7 @@ else
             window) maim -i "$(xdotool getactivewindow)" "$OUT" ;;
             screen) maim "$OUT" ;;
         esac
-        [ "$clip" = "1" ] && xclip -selection clipboard -t image/png -i "$OUT"
+        [ "$clip" = "1" ] && xclip -selection clipboard -t image/png < "$OUT"
     else
         _install_hint "flameshot or maim"
         exit 1

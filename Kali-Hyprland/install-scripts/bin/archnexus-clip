@@ -51,10 +51,10 @@ case "${1:-pick}" in
             echo "no clipboard history yet (run 'archnexus-clip --record' periodically, or install cliphist/greenclip)" >&2
             exit 1
         fi
-        sel=$(awk -v RS='\n---\n' '{print NR": "substr($0,1,80)}' "$HIST" | _pick)
+        sel=$(awk -v RS=$'\n---\n' '{print NR": "substr($0,1,80)}' "$HIST" | _pick)
         [ -z "$sel" ] && exit 0
         idx=${sel%%:*}
-        entry=$(awk -v RS='\n---\n' -v n="$idx" 'NR==n {print; exit}' "$HIST")
+        entry=$(awk -v RS=$'\n---\n' -v n="$idx" 'NR==n {print; exit}' "$HIST")
         if command -v xclip >/dev/null 2>&1; then
             printf '%s' "$entry" | xclip -i -selection clipboard
         else

@@ -29,7 +29,7 @@ if [ -z "$release_info" ]; then
 fi
 
 # Get the tarball URL for the specific release
-tarball_url=$(echo "$release_info" | grep "tarball_url" | cut -d '"' -f 4)
+tarball_url=$(printf '%s' "$release_info" | jq -r '.tarball_url')
 
 # Check if the URL is obtained successfully
 if [ -z "$tarball_url" ]; then

@@ -28,13 +28,12 @@ kill "$SCAN_PID" 2>/dev/null || true
 bluetoothctl scan off >/dev/null 2>&1 || true
 
 # Build the device list:  MAC  NAME  [connected]
-mapfile -t devs < <(bluetoothctl devices | awk '{ $1=""; mac=""; name=substr($0,2); print $0 }')
-mapfile -t paired_list < <(bluetoothctl paired-devices 2>/dev/null || true)
+mapfile -t devs < <(bluetoothctl devices | awk '{ $1=""; print }')
 
 choice=$(printf '%s\n' "${devs[@]}" | _pick)
 [ -z "$choice" ] && exit 0
 
-mac=$(awk '{print $2}' <<<"$choice")
+mac=$(awk '{print $1}' <<<"$choice")
 [ -z "$mac" ] && exit 0
 
 action=$(printf 'connect\ndisconnect\npair\ntrust\nforget\n' | _pick)

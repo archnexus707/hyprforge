@@ -45,11 +45,11 @@ assign [class="thunar"]   $ws4
 # ----- launchers / app keybinds ---------------------------------------------
 bindsym $mod+Return       exec kitty
 bindsym $mod+r            exec --no-startup-id rofi -show drun
-bindsym $mod+Shift+r      exec --no-startup-id rofi -show run
+# bindsym $mod+Shift+r      exec --no-startup-id rofi -show run  (overridden by archnexus-screenrecord)
 bindsym $mod+Tab          exec --no-startup-id rofi -show window
 bindsym $mod+e            exec --no-startup-id thunar
 bindsym $mod+b            exec --no-startup-id firefox
-bindsym Print             exec --no-startup-id flameshot gui
+# bindsym Print             exec --no-startup-id flameshot gui  (overridden by archnexus-shot screen)
 bindsym $mod+l            exec --no-startup-id i3lock -c 000000
 bindsym $mod+Shift+t      exec --no-startup-id ~/.local/bin/dwm-theme rofi
 
@@ -60,7 +60,7 @@ bindsym $mod+space        floating toggle
 bindsym $mod+Shift+space  focus mode_toggle
 
 # focus (vim-style h j k l, plus arrows)
-bindsym $mod+h            focus left
+# bindsym $mod+h            focus left  (overridden by archnexus-cheatsheet)
 bindsym $mod+j            focus down
 bindsym $mod+k            focus up
 bindsym $mod+l            focus right
@@ -80,13 +80,13 @@ bindsym $mod+Shift+Up     move up
 bindsym $mod+Shift+Right  move right
 
 # split orientation
-bindsym $mod+v            split v
+# bindsym $mod+v            split v  (overridden by archnexus-clip)
 bindsym $mod+Shift+v      split h
 
 # layout
 bindsym $mod+s            layout stacking
-bindsym $mod+w            layout tabbed
-bindsym $mod+x            layout toggle split
+# bindsym $mod+w            layout tabbed  (overridden by archnexus-wifi)
+# bindsym $mod+x            layout toggle split  (overridden by archnexus-power)
 
 # ----- workspaces ------------------------------------------------------------
 bindsym $mod+1            workspace $ws1

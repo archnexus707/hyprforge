@@ -198,7 +198,7 @@ verify_and_offer_fix_apt_sources() {
 
 # Warning: End of Life Support
 printf "\n%.0s" {1..2}
-print_color $YELLOW "
+print_color "$YELLOW" "
         █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
                     Kali-Hyprland — by archnexus707
               
@@ -429,7 +429,7 @@ NOTE: If you are installing on a VM, ensure to enable 3D acceleration otherwise 
     fi
 fi
 
-echo "👌 ${OK} ${MAGENTA}archnexus707${RESET} ${SKY_BLUE}let's continue with the installation...${RESET}" | tee -a "$LOG"
+echo "${OK} ${MAGENTA}archnexus707${RESET} ${SKY_BLUE}let's continue with the installation...${RESET}" | tee -a "$LOG"
 
 # Prime sudo + start a keep-alive once for the whole session. Without this,
 # the many backgrounded `sudo apt install ... >>LOG 2>&1 &` calls inside
@@ -999,7 +999,8 @@ for option in "${options[@]}"; do
         if check_services_running; then
             active_list=$(printf "%s\n" "${active_services[@]}")
             whiptail --title "Error" --msgbox "One of the following login services is running:\n$active_list\n\nPlease stop & disable it or DO not choose SDDM." 12 60
-            exec "$0"
+            echo "${ERROR} Cannot proceed: another display manager is running. Stop it first."
+            exit 1
         else
             echo "${INFO} Installing and configuring ${SKY_BLUE}SDDM...${RESET}" | tee -a "$LOG"
             execute_script "sddm.sh"
@@ -1152,8 +1153,8 @@ if [ -e /usr/local/bin/hyprland ] || [ -f /usr/local/bin/Hyprland ]; then
     printf "${SKY_BLUE}Thank you${RESET} 🫰 for using ${MAGENTA}archnexus707's Kali-Hyprland${RESET}. ${YELLOW}Enjoy and Have a good day!${RESET}"
     printf "\n%.0s" {1..2}
 
-    printf "\n${NOTE} You can start Hyprland by typing ${SKY_BLUE}Hyprland${RESET} (IF SDDM is not installed) (note the capital H!).\n"
-    printf "\n${NOTE} However, it is ${YELLOW}highly recommended to reboot${RESET} your system.\n\n"
+    printf '\n%s You can start Hyprland by typing %sHyprland%s (IF SDDM is not installed) (note the capital H!).\n' "$NOTE" "$SKY_BLUE" "$RESET"
+    printf '\n%s However, it is %shighly recommended to reboot%s your system.\n\n' "$NOTE" "$YELLOW" "$RESET"
 
     while true; do
         echo -n "${CAT} Would you like to reboot now? (y/n): "
