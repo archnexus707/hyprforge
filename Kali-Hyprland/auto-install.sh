@@ -23,7 +23,7 @@ RESET="$(tput sgr0)"
 # Once Kali-Hyprland is published under your own GitHub, change this to your
 # fork URL (e.g. https://github.com/archnexus707/Kali-Hyprland.git).
 Distro="Kali-Hyprland"
-Github_URL="https://github.com/JaKooLit/Debian-Hyprland.git"
+Github_URL="https://github.com/archnexus707/hyprforge.git"
 Distro_DIR="$HOME/$Distro"
 
 printf "\n%.0s" {1..1}

@@ -116,40 +116,43 @@ show_progress() {
 
 
 # Function for installing packages with a progress bar
+# Accepts optional second argument for log path (backward compat)
 install_package() {
-  if dpkg -l | grep -q -w "$1" ; then
-    echo -e "${INFO} ${MAGENTA}$1${RESET} is already installed. Skipping..."
+  local pkg="$1"
+  local pkg_log="${2:-$LOG}"
+  if dpkg -l | grep -q -w "^ii  $pkg " ; then
+    echo -e "${INFO} ${MAGENTA}$pkg${RESET} is already installed. Skipping..."
     return 0
   fi
   (
-    stdbuf -oL sudo apt install -y "$1" 2>&1
-  ) >> "$LOG" 2>&1 &
+    stdbuf -oL sudo apt install -y "$pkg" 2>&1
+  ) >> "$pkg_log" 2>&1 &
   PID=$!
-  show_progress $PID "$1"
+  show_progress $PID "$pkg"
 
-  if dpkg -l | grep -q -w "$1"; then
-      echo -e "\e[1A\e[K${OK} Package ${YELLOW}$1${RESET} has been successfully installed!"
+  if dpkg -l | grep -q -w "^ii  $pkg " ; then
+      echo -e "\e[1A\e[K${OK} Package ${YELLOW}$pkg${RESET} has been successfully installed!"
       return 0
   fi
 
   # First attempt failed. The two most common recoverable causes on
   # Kali/Debian are an interrupted dpkg state and stale package lists — fix
   # both, then retry once before giving up.
-  echo -e "\e[1A\e[K${WARN} ${YELLOW}$1${RESET} failed; attempting auto-recovery..."
-  sudo dpkg --configure -a >> "$LOG" 2>&1 || true
-  sudo apt-get update >> "$LOG" 2>&1 || true
-  sudo apt-get -f install -y >> "$LOG" 2>&1 || true
+  echo -e "\e[1A\e[K${WARN} ${YELLOW}$pkg${RESET} failed; attempting auto-recovery..."
+  sudo dpkg --configure -a >> "$pkg_log" 2>&1 || true
+  sudo apt-get update >> "$pkg_log" 2>&1 || true
+  sudo apt-get -f install -y >> "$pkg_log" 2>&1 || true
   (
-    stdbuf -oL sudo apt install -y "$1" 2>&1
-  ) >> "$LOG" 2>&1 &
+    stdbuf -oL sudo apt install -y "$pkg" 2>&1
+  ) >> "$pkg_log" 2>&1 &
   PID=$!
-  show_progress $PID "$1"
+  show_progress $PID "$pkg"
 
-  if dpkg -l | grep -q -w "$1"; then
-      echo -e "\e[1A\e[K${OK} Package ${YELLOW}$1${RESET} installed (after recovery)!"
+  if dpkg -l | grep -q -w "^ii  $pkg " ; then
+      echo -e "\e[1A\e[K${OK} Package ${YELLOW}$pkg${RESET} installed (after recovery)!"
       return 0
   fi
-  echo -e "\e[1A\e[K${ERROR} ${YELLOW}$1${RESET} failed to install — full log: $LOG"
+  echo -e "\e[1A\e[K${ERROR} ${YELLOW}$pkg${RESET} failed to install — full log: $pkg_log"
   _archnexus_dump_log_tail 20
   # Record the failed package name in a session-wide side-channel so the
   # orchestrator's execute_script wrapper can detect this even when the caller
@@ -162,39 +165,45 @@ install_package() {
 }
 
 # Function for build depencies with a progress bar
-build_dep() { 
-  echo -e "${INFO} building dependencies for ${MAGENTA}$1${RESET} "
+build_dep() {
+  local pkg="$1"
+  local pkg_log="${2:-$LOG}"
+  echo -e "${INFO} building dependencies for ${MAGENTA}$pkg${RESET} "
     (
-      stdbuf -oL sudo apt build-dep -y "$1" 2>&1
-    ) >> "$LOG" 2>&1 &
+      stdbuf -oL sudo apt build-dep -y "$pkg" 2>&1
+    ) >> "$pkg_log" 2>&1 &
     PID=$!
-    show_progress $PID "$1" 
+    show_progress $PID "$pkg"
 }
 
 # Function for cargo install with a progress bar
-cargo_install() { 
-  echo -e "${INFO} installing ${MAGENTA}$1${RESET} using cargo..."
+cargo_install() {
+  local pkg="$1"
+  local pkg_log="${2:-$LOG}"
+  echo -e "${INFO} installing ${MAGENTA}$pkg${RESET} using cargo..."
     (
-      stdbuf -oL cargo install "$1" 2>&1
-    ) >> "$LOG" 2>&1 &
+      stdbuf -oL cargo install "$pkg" 2>&1
+    ) >> "$pkg_log" 2>&1 &
     PID=$!
-    show_progress $PID "$1" 
+    show_progress $PID "$pkg"
 }
 
 # Function for re-installing packages with a progress bar
 re_install_package() {
+    local pkg="$1"
+    local pkg_log="${2:-$LOG}"
     (
-        stdbuf -oL sudo apt install --reinstall -y "$1" 2>&1
-    ) >> "$LOG" 2>&1 &
-    
+        stdbuf -oL sudo apt install --reinstall -y "$pkg" 2>&1
+    ) >> "$pkg_log" 2>&1 &
+
     PID=$!
-    show_progress $PID "$1" 
-    
-    if dpkg -l | grep -q -w "$1"; then
-        echo -e "\e[1A\e[K${OK} Package ${YELLOW}$1${RESET} has been successfully re-installed!"
+    show_progress $PID "$pkg"
+
+    if dpkg -l | grep -q -w "^ii  $pkg " ; then
+        echo -e "\e[1A\e[K${OK} Package ${YELLOW}$pkg${RESET} has been successfully re-installed!"
     else
         # Package not found, reinstallation failed
-        echo -e "${ERROR} ${YELLOW}$1${RESET} failed to re-install. Please check the install.log. You may need to install it manually. Sorry, I have tried :("
+        echo -e "${ERROR} ${YELLOW}$pkg${RESET} failed to re-install. Please check the install.log. You may need to install it manually. Sorry, I have tried :("
     fi
 }
 
@@ -205,9 +214,9 @@ uninstall_package() {
   # Checking if package is installed
   if sudo dpkg -l | grep -q -w "^ii  $1" ; then
     echo -e "${NOTE} removing $pkg ..."
-    sudo apt autoremove -y "$1" >> "$LOG" 2>&1 | grep -v "error: target not found"
+    sudo apt autoremove -y "$1" >> "$LOG" 2>&1 || true
     
-    if ! dpkg -l | grep -q -w "^ii  $1" ; then
+    if ! dpkg -l | grep -q -w "^ii *$1 " ; then
       echo -e "\e[1A\e[K${OK} ${MAGENTA}$1${RESET} removed."
     else
       echo -e "\e[1A\e[K${ERROR} $pkg Removal failed. No actions required."

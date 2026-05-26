@@ -44,7 +44,7 @@ printf "\n%.0s" {1..1}
 if command -v zsh >/dev/null; then
   printf "${NOTE} Installing ${SKY_BLUE}Oh My Zsh and plugins${RESET} ...\n"
   if [ ! -d "$HOME/.oh-my-zsh" ]; then  
-    sh -c "$(curl -fsSL https://install.ohmyz.sh)" "" --unattended  	       
+    curl -fsSL https://install.ohmyz.sh -o /tmp/ohmyzsh-install.sh && bash /tmp/ohmyzsh-install.sh --unattended && rm -f /tmp/ohmyzsh-install.sh  	       
   else
     echo "${INFO} Directory .oh-my-zsh already exists. Skipping re-installation." 2>&1 | tee -a "$LOG"
   fi

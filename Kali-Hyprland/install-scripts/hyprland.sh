@@ -52,7 +52,7 @@ if [ -d "$SRC_DIR" ]; then
     rm -rf "$SRC_DIR" 2>&1 | tee -a "$LOG"
 fi
 
-if git clone --recursive -b $tag "https://github.com/hyprwm/Hyprland" "$SRC_DIR"; then
+if git clone --recursive -b "$tag" "https://github.com/hyprwm/Hyprland" "$SRC_DIR"; then
     cd "$SRC_DIR" || exit 1
     BUILD_DIR="$BUILD_ROOT/hyprland"
     mkdir -p "$BUILD_DIR"

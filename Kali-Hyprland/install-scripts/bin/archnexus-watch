@@ -65,13 +65,17 @@ _watch_inotify_mon() {
 }
 
 _watch_entr() {
-    # entr re-runs the cmd whenever any watched file changes
+    local stamp="/tmp/.archnexus-watch-stamp"
+    touch "$stamp"
     find "${DIRS[@]}" -type f 2>/dev/null | entr -d -p sh -c '
-        # entr exposes the changed file in $0 only on -r; we accept "any file"
-        # and decide which daemon to reload by inspecting the just-saved dirs
         for d in '"${DIRS[*]}"'; do
-            [ -d "$d" ] && find "$d" -newer /tmp/.archnexus-watch-stamp -type f 2>/dev/null
+            [ -d "$d" ] && find "$d" -newer '"$stamp"' -type f 2>/dev/null
+        done | while read -r f; do
+            case "$f" in
+                *picom*) pkill -SIGUSR1 picom 2>/dev/null && notify-send "archnexus-watch" "picom reload" 2>/dev/null ;;
+            esac
         done
+        touch '"$stamp"'
     '
 }
 

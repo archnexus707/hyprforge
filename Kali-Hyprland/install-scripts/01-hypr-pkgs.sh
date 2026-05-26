@@ -143,10 +143,10 @@ printf "\n%.0s" {1..2}
 
 # Install up-to-date Rust
 echo "${INFO} Installing most ${YELLOW}up to date Rust compiler${RESET} ..."
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y 2>&1 | tee -a "$LOG"
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/rustup-init.sh && sh /tmp/rustup-init.sh -y 2>&1 | tee -a "$LOG" && rm -f /tmp/rustup-init.sh
 source "$HOME/.cargo/env"
 
 ## making brightnessctl work
-sudo chmod +s $(which brightnessctl) 2>&1 | tee -a "$LOG" || true
+sudo chmod +s "$(command -v brightnessctl)" 2>&1 | tee -a "$LOG" || true
 
 printf "\n%.0s" {1..2}

@@ -46,7 +46,7 @@ LOG="Install-Logs/install-$(date +%d-%H%M%S)_sddm.log"
 # Install SDDM (no-recommends)
 printf "\n%s - Installing ${SKY_BLUE}SDDM and dependencies${RESET} .... \n" "${NOTE}"
 for PKG1 in "${sddm1[@]}" ; do
-  sudo apt install --no-install-recommends -y "$PKG1" | tee -a "$LOG"
+  install_package "$PKG1" "$LOG"
 done
 
 # Installation of additional sddm stuff
