@@ -290,6 +290,14 @@ cd Kali-Hyprland && ./update-hyprland.sh   # per-component rebuild
 
 ---
 
+## ☕ Support
+
+If hyprforge made your desktop glow, consider buying me a coffee:
+
+[![](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-archnexus707@gmail.com-yellow?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](mailto:archnexus707@gmail.com)
+
+---
+
 ## ◆ Special thanks
 
 Heartfelt thanks to **[JaKooLit](https://github.com/JaKooLit)** — his Debian-Hyprland project laid the early foundation that the Kali-Hyprland subproject was inspired by. The Hyprland community wouldn't be what it is without his work.
