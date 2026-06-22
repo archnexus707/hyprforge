@@ -54,16 +54,18 @@ banner() {
     echo
     echo -e "${NEON}${BOLD}"
     cat <<'EOF'
-     ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄
-     ██▄  ██ ███████████ ███████████ ██▄  ██ ███████████
-     ▐██▌  █ ▐████  ████ ▐███     ▐█ ▐██▌  █ ▐███     ▐█
-     ▐██▌       ████  ████ ▐█████████▌ ▐██▌    ▐█████████▌
-     ▐██▌  ██   ████  ████ ▐███▌       ▐██▌  █ ▐███▌
-     ██▌▄ ██   ████  ████ ███████████ ██▌▄ ██ ███████████
+   ╔══════════════════════════════════════════════════════════╗
+   ║   ▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓   ▓▓   ▓▓▓▓▓▓▓  ▓▓    ▓▓    ║
+   ║   ▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓  ▓▓▓▓  ▓▓▓▓▓▓▓  ▓▓▓▓  ▓▓    ║
+   ║   ▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓  ▓▓ ▓▓  ▓▓▓▓  ▓▓▓▓▓▓▓  ▓▓ ▓▓ ▓▓    ║
+   ║   ▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓  ▓▓ ▓▓  ▓▓▓▓  ▓▓▓▓▓▓▓  ▓▓  ▓▓▓▓    ║
+   ║   ▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓  ▓▓  ▓  ▓▓▓▓  ▓▓▓▓▓▓▓  ▓▓   ▓▓▓    ║
+   ║   ▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓  ▓▓     ▓▓▓▓  ▓▓▓▓▓▓▓  ▓▓    ▓▓    ║
+   ╚══════════════════════════════════════════════════════════╝
 EOF
     echo -e "${RESET}"
     echo
-    typewriter "  ${PINK}◆${RESET} ${NEON}${BOLD}D_WM-XFCE // SESSION SPAWN // SYSTEM ONLINE${RESET}" 0.008
+    typewriter "  ${PINK}${BOLD}◆${RESET} ${NEON}${BOLD}D_WM-XFCE // SESSION SPAWN // SYSTEM ONLINE${RESET}" 0.008
     echo
 }
 
@@ -144,5 +146,5 @@ echo -e "  ${CYAN}./doctor.sh${RESET}  ${DIM}→${RESET} system diagnostic"
 echo -e "  ${CYAN}./welcome.sh${RESET} ${DIM}→${RESET} full interactive tour"
 echo
 echo -e "  ${DIM}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
-echo -e "  ${GRAY}forged by archnexus707 // hyprforge${RESET}"
+echo -e "  ${GRAY}forged by arch_nexus707 // hyprforge${RESET}"
 echo

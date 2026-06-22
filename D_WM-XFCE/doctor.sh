@@ -4,23 +4,39 @@ set -uo pipefail
 
 RESET='\033[0m'
 BOLD='\033[1m'
+DIM='\033[2m'
 GREEN='\033[38;5;46m'
 RED='\033[38;5;196m'
 YELLOW='\033[38;5;226m'
 CYAN='\033[38;5;51m'
 MAGENTA='\033[38;5;201m'
+NEON='\033[38;5;123m'
+PINK='\033[38;5;198m'
 
 PASS=0; FAIL=0; WARN=0
 
-pass() { ((PASS++)); echo -e "  ${GREEN}[PASS]${RESET} $*"; }
-fail() { ((FAIL++)); echo -e "  ${RED}[FAIL]${RESET} $*"; }
-warn() { ((WARN++)); echo -e "  ${YELLOW}[WARN]${RESET} $*"; }
+pass() { ((PASS++)); echo -e "  ${GREEN}[■]${RESET} $*"; }
+fail() { ((FAIL++)); echo -e "  ${RED}[□]${RESET} $*"; }
+warn() { ((WARN++)); echo -e "  ${YELLOW}[▣]${RESET} $*"; }
 
-header() { echo; echo -e "${MAGENTA}── $* ──${RESET}"; }
+header() { echo; echo -e "${NEON}${BOLD}╺━━ ${MAGENTA}$*${RESET}${NEON}${BOLD} ━━╸${RESET}"; }
 
 banner() {
-    echo -e "${CYAN}  D_WM-XFCE System Diagnostic${RESET}"
-    echo -e "${CYAN}  $(date)${RESET}"
+    clear
+    echo
+    echo -e "${NEON}${BOLD}"
+    cat <<'EOF'
+      ╔══════════════════════════════════════╗
+      ║   ▓▓▓    ▓▓▓▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓  ║
+      ║   ▓▓▓▓  ▓▓▓▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓  ║
+      ║   ▓▓ ▓▓ ▓▓ ▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓  ║
+      ║   ▓▓  ▓▓▓  ▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓  ║
+      ║   ▓▓   ▓   ▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓  ║
+      ╚══════════════════════════════════════╝
+EOF
+    echo -e "${RESET}"
+    echo -e "  ${PINK}${BOLD}◆${RESET} ${CYAN}${BOLD}D_WM-XFCE${RESET} ${DIM}system diagnostic${RESET}"
+    echo -e "  ${PINK}${BOLD}◆${RESET} ${DIM}$(date)${RESET}  ${DIM}╱${RESET}  ${DIM}arch_nexus707${RESET}"
     echo
 }
 
