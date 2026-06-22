@@ -15,30 +15,31 @@ MAGENTA='\033[38;5;201m'
 ORANGE='\033[38;5;208m'
 PINK='\033[38;5;198m'
 NEON='\033[38;5;123m'
+ACCENT='\033[38;5;45m'
 
 banner() {
     clear
     echo
-    echo -e "${CYAN}${BOLD}"
+    echo -e "${NEON}${BOLD}"
     cat <<'EOF'
-         ██████╗     ██╗    ██╗███╗   ███╗
-         ██╔══██╗    ██║    ██║████╗ ████║
-         ██║  ██║    ██║ █╗ ██║██╔████╔██║
-         ██║  ██║    ██║███╗██║██║╚██╔╝██║
-         ██████╔╝    ╚███╔███╔╝██║ ╚═╝ ██║
-         ╚═════╝      ╚══╝╚══╝ ╚═╝     ╚═╝
-          ██╗  ██╗███████╗ ██████╗███████╗
-          ╚██╗██╔╝██╔════╝██╔════╝██╔════╝
-           ╚███╔╝ █████╗  ██║     █████╗  
-           ██╔██╗ ██╔══╝  ██║     ██╔══╝  
-          ██╔╝ ██╗██║     ╚██████╗███████╗
-          ╚═╝  ╚═╝╚═╝      ╚═════╝╚══════╝
+    ╔══════════════════════════════════════════════════════════════╗
+    ║     ▓▓▓▓▓▓▓▓   ▓▓▓▓▓▓▓▓  ▓▓     ▓▓  ▓▓▓   ▓▓▓  ▓▓▓▓▓▓▓▓  ║
+    ║     ▓▓    ▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓   ▓▓▓▓  ▓▓▓▓ ▓▓▓▓  ▓▓        ║
+    ║     ▓▓    ▓▓  ▓▓▓ ▓▓▓▓  ▓▓ ▓▓ ▓▓ ▓▓  ▓▓ ▓▓▓ ▓▓  ▓▓▓▓▓▓▓   ║
+    ║     ▓▓    ▓▓  ▓▓▓▓▓▓▓▓  ▓▓  ▓▓▓  ▓▓  ▓▓  ▓  ▓▓  ▓▓        ║
+    ║     ▓▓▓▓▓▓▓▓   ▓▓  ▓▓▓  ▓▓   ▓   ▓▓  ▓▓     ▓▓  ▓▓▓▓▓▓▓▓  ║
+    ║                          ▓▓▓  ▓▓▓                          ║
+    ║               ▓▓   ▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓                  ║
+    ║               ▓▓▓ ▓▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓                  ║
+    ║               ▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓                  ║
+    ║               ▓▓ ▓ ▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓                  ║
+    ║               ▓▓   ▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓                  ║
+    ╚══════════════════════════════════════════════════════════════╝
 EOF
     echo -e "${RESET}"
-    echo
-    echo -e "  ${NEON}${BOLD}◆${RESET} ${CYAN}${BOLD}D_WM-XFCE${RESET}  ${DIM}cyberpunk tiling compositor for Kali XFCE${RESET}"
-    echo -e "  ${NEON}${BOLD}◆${RESET} ${ORANGE}i3wm${RESET} ${DIM}·${RESET} ${ORANGE}picom${RESET} ${DIM}·${RESET} ${ORANGE}kitty${RESET} ${DIM}·${RESET} ${ORANGE}rofi${RESET} ${DIM}·${RESET} ${ORANGE}dunst${RESET} ${DIM}·${RESET} ${ORANGE}zsh${RESET}"
-    echo -e "  ${NEON}${BOLD}◆${RESET} ${DIM}forged by${RESET} ${PINK}archnexus707${RESET} ${DIM}// hyprforge${RESET}"
+    echo -e "  ${ACCENT}${BOLD}▸${RESET} ${CYAN}${BOLD}D_WM-XFCE${RESET}  ${DIM}cyberpunk tiling · compositor · shell${RESET}"
+    echo -e "  ${ACCENT}${BOLD}▸${RESET} ${ORANGE}i3wm${RESET} ${DIM}╱${RESET} ${ORANGE}picom${RESET} ${DIM}╱${RESET} ${ORANGE}kitty${RESET} ${DIM}╱${RESET} ${ORANGE}rofi${RESET} ${DIM}╱${RESET} ${ORANGE}dunst${RESET} ${DIM}╱${RESET} ${ORANGE}zsh${RESET}"
+    echo -e "  ${ACCENT}${BOLD}▸${RESET} ${DIM}forged by${RESET} ${PINK}${BOLD}arch_nexus707${RESET} ${DIM}╱ ${RESET}${DIM}hyprforge${RESET}"
     echo
     sleep 0.1
 }
