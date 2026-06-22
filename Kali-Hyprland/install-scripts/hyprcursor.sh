@@ -32,7 +32,7 @@ fi
 
 # Set the name of the log file to include the current date and time
 LOG="Install-Logs/install-$(date +%d-%H%M%S)_hyprcursor.log"
-MLOG="install-$(date +%d-%H%M%S)_hyprcursor.log"
+MLOG="install-$(date +%d-%H%M%S)_hyprcursor2.log"
 
 # Installation of dependencies
 printf "\n%s - Installing hyprcursor dependencies.... \n" "${NOTE}"
@@ -59,7 +59,7 @@ if git clone --recursive -b $tag https://github.com/hyprwm/hyprcursor.git "$SRC_
     BUILD_DIR="$BUILD_ROOT/hyprcursor"
     mkdir -p "$BUILD_DIR"
 	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr -S . -B "$BUILD_DIR"
-	cmake --build "$BUILD_DIR" --config Release --target all -j`nproc 2>/dev/null || getconf NPROCESSORS_CONF`
+	cmake --build "$BUILD_DIR" --config Release --target all -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)"
     if sudo cmake --install "$BUILD_DIR" 2>&1 | tee -a "$MLOG" ; then
         printf "${OK} hyprcursor installed successfully.\n" 2>&1 | tee -a "$MLOG"
     else

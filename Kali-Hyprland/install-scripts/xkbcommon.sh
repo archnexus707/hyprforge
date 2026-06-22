@@ -27,7 +27,7 @@ fi
 
 # Set the name of the log file to include the current date and time
 LOG="Install-Logs/install-$(date +%d-%H%M%S)_xkbcommon.log"
-MLOG="install-$(date +%d-%H%M%S)_xkbcommon.log"
+MLOG="install-$(date +%d-%H%M%S)_xkbcommon2.log"
 
 # Installation of dependencies
 printf "\n%s - Installing xkbcommon dependencies.... \n" "${NOTE}"

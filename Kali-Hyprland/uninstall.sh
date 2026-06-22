@@ -152,9 +152,9 @@ remove_source_builds() {
     )
 
     for item in "${REMOVE_LIST[@]}"; do
-        if ls $item >/dev/null 2>&1; then
+        if ls "$item" >/dev/null 2>&1; then
             echo "Removing $item"
-            if ! sudo rm -rf $item; then
+            if ! sudo rm -rf "$item"; then
                 echo "$ERROR Failed to remove: $item"
             else
                 echo "$OK Removed: $item"

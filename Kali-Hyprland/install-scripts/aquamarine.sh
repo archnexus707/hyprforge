@@ -36,7 +36,7 @@ fi
 
 # Set the name of the log file to include the current date and time
 LOG="Install-Logs/install-$(date +%d-%H%M%S)_aquamarine.log"
-MLOG="install-$(date +%d-%H%M%S)_aquamarine.log"
+MLOG="install-$(date +%d-%H%M%S)_aquamarine2.log"
 
 # Installation of dependencies
 printf "\n%s - Installing ${YELLOW}aquamarine dependencies${RESET} .... \n" "${INFO}"

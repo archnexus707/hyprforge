@@ -57,7 +57,7 @@ MLOG="install-$(date +%d-%H%M%S)_hyprlock2.log"
 printf "\n%s - Installing ${YELLOW}hyprlock dependencies${RESET} .... \n" "${INFO}"
 
 for PKG1 in "${lock[@]}"; do
-  re_install_package "$PKG1" "$LOG"
+  install_package "$PKG1" 2>&1 | tee -a "$LOG"
 done
 
 for PKG1 in "${build_dep[@]}"; do
@@ -77,7 +77,7 @@ if git clone --recursive ${git_ref:+-b "$git_ref"} https://github.com/hyprwm/hyp
     BUILD_DIR="$BUILD_ROOT/hyprlock"
     mkdir -p "$BUILD_DIR"
 	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -S . -B "$BUILD_DIR"
-	cmake --build "$BUILD_DIR" --config Release --target hyprlock -j`nproc 2>/dev/null || getconf _NPROCESSORS_CONF`
+	cmake --build "$BUILD_DIR" --config Release --target hyprlock -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)"
     if [ $DO_INSTALL -eq 1 ]; then
         if sudo cmake --install "$BUILD_DIR" 2>&1 | tee -a "$MLOG" ; then
             printf "${OK} ${YELLOW}hyprlock ${git_ref:-default}${RESET} installed successfully.\n" 2>&1 | tee -a "$MLOG"

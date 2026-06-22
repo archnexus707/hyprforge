@@ -78,20 +78,24 @@ _detect_codename() {
 }
 
 _has_deb_src_enabled() {
-    sudo grep -RhsE '^[[:space:]]*deb-src[[:space:]]' /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null | grep -q .
+    ( sudo grep -RhsE '^[[:space:]]*deb-src[[:space:]]' /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null;
+      sudo grep -RhsE '^[[:space:]]*Types:[[:space:]].*deb-src' /etc/apt/sources.list.d/*.sources 2>/dev/null ) | grep -q .
 }
 
 _has_component_enabled() {
-    # $1: component (e.g., non-free, non-free-firmware)
     local comp="$1"
-    sudo grep -RhsE "^[[:space:]]*deb(-src)?[[:space:]].*\\b${comp}(\\s|$)" /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null | grep -q .
+    ( sudo grep -RhsE "^[[:space:]]*deb(-src)?[[:space:]].*\\b${comp}(\\s|\$)" /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null;
+      sudo grep -RhsE "^[[:space:]]*Components:.*\\b${comp}\\b" /etc/apt/sources.list.d/*.sources 2>/dev/null ) | grep -q .
 }
 
-# Unconditionally uncomment deb-src lines across all APT list files
 _uncomment_deb_src_everywhere() {
     for f in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
         [ -f "$f" ] || continue
         sudo sed -i -E 's/^[[:space:]]*#([[:space:]]*deb-src[[:space:]])/\1/' "$f" 2>/dev/null || true
+    done
+    for f in /etc/apt/sources.list.d/*.sources; do
+        [ -f "$f" ] || continue
+        sudo sed -i -E '/^[[:space:]]*Types:[[:space:]]*deb[[:space:]]*$/s/deb/& deb-src/' "$f" 2>/dev/null || true
     done
 }
 
@@ -231,6 +235,11 @@ print_color "$YELLOW" "
 "
 printf "\n%.0s" {1..2}
 
+# Parse help flag early — before banner/confirm prompts
+for arg in "$@"; do
+    case "$arg" in -h|--help) print_help; exit 0 ;; esac
+done
+
 # Prompt user to continue or exit
 read -rp "Do you want to continue with the installation? [y/N]: " confirm
 case "$confirm" in
@@ -260,11 +269,7 @@ fi
 
 # Function to check if the system is Ubuntu
 is_ubuntu() {
-    # Check for 'Ubuntu' in /etc/os-release
-    if grep -q 'Ubuntu' /etc/os-release; then
-        return 0
-    fi
-    return 1
+    [ -r /etc/os-release ] && . /etc/os-release && [ "${ID:-}" = "ubuntu" ]
 }
 
 # Check if the system is Ubuntu
@@ -445,7 +450,7 @@ else
         exit 2
     fi
 fi
-( while kill -0 "$$" 2>/dev/null; do sudo -n true 2>/dev/null || exit; sleep 60; done ) &
+( for ((_i=0;_i<120;_i++)); do sudo -n true 2>/dev/null || exit; sleep 60; kill -0 "$$" 2>/dev/null || exit; done ) &
 _ARCHNEXUS_SUDO_KEEPALIVE_PID=$!
 export _ARCHNEXUS_SUDO_KEEPALIVE_PID
 trap '[ -n "${_ARCHNEXUS_SUDO_KEEPALIVE_PID:-}" ] && kill "$_ARCHNEXUS_SUDO_KEEPALIVE_PID" 2>/dev/null; true' EXIT INT TERM
@@ -467,7 +472,7 @@ unset _preflight_rc
 # a subshell so Global_functions.sh's `set -e` doesn't leak in.
 ( . "$(dirname "$0")/install-scripts/Global_functions.sh" >/dev/null 2>&1; archnexus_offer_snapshot ) || true
 
-sleep 1
+[ -t 1 ] && sleep 1 || true
 printf "\n%.0s" {1..1}
 
 # install pciutils if detected not installed. Necessary for detecting GPU
@@ -478,7 +483,7 @@ if ! dpkg -l | grep -w pciutils >/dev/null; then
 fi
 
 # Path to the install-scripts directory
-script_directory=install-scripts
+script_directory="$(dirname "$(readlink -f "$0")")/install-scripts"
 
 # ----- archnexus707 resume support -----
 # Each successful execute_script call appends the script name to
@@ -855,16 +860,16 @@ verify_and_offer_fix_apt_sources
 echo "${INFO} Running a ${SKY_BLUE}full system update...${RESET}" | tee -a "$LOG"
 sudo apt update
 
-sleep 1
+[ -t 1 ] && sleep 1 || true
 # execute pre clean up
 execute_script "02-pre-cleanup.sh"
 
 echo "${INFO} Installing ${SKY_BLUE}necessary dependencies...${RESET}" | tee -a "$LOG"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "00-dependencies.sh"
 
 echo "${INFO} Installing ${SKY_BLUE}necessary fonts...${RESET}" | tee -a "$LOG"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "fonts.sh"
 
 # Build from source (only method)
@@ -876,70 +881,68 @@ if [ "${FETCH_LATEST:-0}" = "1" ] && [ -f ./refresh-hypr-tags.sh ]; then
 fi
 
 echo "${INFO} Installing ${SKY_BLUE}Kali-Hyprland packages from source...${RESET}" | tee -a "$LOG"
-sleep 1
 execute_script "01-hypr-pkgs.sh"
-sleep 1
 # Phase order matches the canonical DEFAULT_MODULES in update-hyprland.sh.
 # Foundational libs first (xkbcommon, hyprutils, hyprlang), then protocols,
 # then everything that depends on them, finally hyprland itself.
 execute_script "xkbcommon.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprutils.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprlang.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprtoolkit.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 # Ensure wayland-protocols (from source) is installed to satisfy Hyprland's >= 1.45 requirement
 execute_script "wayland-protocols-src.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "aquamarine.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprgraphics.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprwayland-scanner.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprland-protocols.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprcursor.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprland-qt-support.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprland-guiutils.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 # Build hyprwire before Hyprland (required by Hyprland >= 0.53)
 execute_script "hyprwire.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 if [ -f "$script_directory/hyprwire-protocols.sh" ]; then
     execute_script "hyprwire-protocols.sh"
-    sleep 1
+    [ -t 1 ] && sleep 1 || true
 fi
 execute_script "hyprland.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprpolkitagent.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "wallust.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "swww.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "rofi-wayland.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprlock.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hypridle.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprpicker.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprshutdown.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprpwcenter.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprtavern.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprsunset.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprlauncher.sh"
-sleep 1
+[ -t 1 ] && sleep 1 || true
 execute_script "hyprsysteminfo.sh"
 
 # Install XDG-Desktop-Portal-Hyprland by default (removed from menu)
@@ -956,7 +959,7 @@ sudo ldconfig 2>/dev/null || true
 #execute_script "imagemagick.sh" #this is for compiling from source. 07 Sep 2024
 # execute_script "waybar-git.sh" only if waybar on repo is old
 
-sleep 1
+[ -t 1 ] && sleep 1 || true
 # Clean up the selected options (remove quotes and trim spaces)
 selected_options=$(echo "$selected_options" | tr -d '"' | tr -s ' ')
 
@@ -1082,7 +1085,8 @@ clear
 
 # copy fastfetch config if debian is not present
 if [ ! -f "$HOME/.config/fastfetch/debian.png" ]; then
-    cp -r assets/fastfetch "$HOME/.config/"
+    mkdir -p "$HOME/.config/fastfetch"
+    cp -rn assets/fastfetch/* "$HOME/.config/fastfetch/" 2>/dev/null || true
 fi
 
 printf "\n%.0s" {1..2}

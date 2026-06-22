@@ -17,7 +17,7 @@
 set -u
 set -o pipefail
 
-REPO_ROOT=$(pwd)
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="$REPO_ROOT/Install-Logs"
 mkdir -p "$LOG_DIR"
 TS=$(date +%F-%H%M%S)

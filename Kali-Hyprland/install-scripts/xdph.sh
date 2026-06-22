@@ -38,7 +38,7 @@ MLOG="install-$(date +%d-%H%M%S)_xdph2.log"
 printf "${NOTE} Installing ${SKY_BLUE}xdg-desktop-portal-hyprland dependencies${RESET}\n\n" 
 
 for PKG1 in "${xdg[@]}"; do
-  re_install_package "$PKG1" 2>&1 | tee -a "$LOG"
+  install_package "$PKG1" 2>&1 | tee -a "$LOG"
   if [ $? -ne 0 ]; then
     echo -e "\e[1A\e[K${ERROR} - $PKG1 Package installation failed, Please check the installation logs"
     exit 1
