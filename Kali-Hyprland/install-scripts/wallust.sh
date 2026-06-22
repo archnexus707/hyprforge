@@ -82,10 +82,10 @@ done
 printf "\n%.0s" {1..1}
 # Move the newly compiled binary to /usr/local/bin
 echo "Moving Wallust binary to /usr/local/bin..." | tee -a "$LOG"
-if sudo mv "$HOME/.cargo/bin/wallust" /usr/local/bin 2>&1 | tee -a "$LOG"; then
-    echo "${OK} Wallust binary moved successfully to /usr/local/bin." | tee -a "$LOG"
+if sudo install -Dm755 "$HOME/.cargo/bin/wallust" /usr/local/bin/wallust 2>&1 | tee -a "$LOG"; then
+    echo "${OK} Wallust binary installed to /usr/local/bin." | tee -a "$LOG"
 else
-    echo "${ERROR} Failed to move Wallust binary. Check the log file $LOG for details." | tee -a "$LOG"
+    echo "${ERROR} Failed to install Wallust binary. Check the log file $LOG for details." | tee -a "$LOG"
     exit 1
 fi
 

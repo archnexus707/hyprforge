@@ -54,7 +54,7 @@ MLOG="install-$(date +%d-%H%M%S)_hyprland-guiutils2.log"
 printf "\n%s - Installing ${YELLOW}hyprland-guiutils dependencies${RESET} .... \n" "${INFO}"
 
 for PKG1 in "${guiutils[@]}"; do
-  re_install_package "$PKG1" 2>&1 | tee -a "$LOG"
+  install_package "$PKG1" 2>&1 | tee -a "$LOG"
   if [ $? -ne 0 ]; then
     echo -e "\e[1A\e[K${ERROR} - ${YELLOW}$PKG1${RESET} Package installation failed, Please check the installation logs"
     exit 1
@@ -83,7 +83,7 @@ if git clone --recursive -b $tag https://github.com/hyprwm/hyprland-guiutils.git
     BUILD_DIR="$BUILD_ROOT/hyprland-guiutils"
     mkdir -p "$BUILD_DIR"
 	cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr/local -S . -B "$BUILD_DIR"
-	cmake --build "$BUILD_DIR" --config Release --target all -j`nproc 2>/dev/null || getconf NPROCESSORS_CONF`
+	cmake --build "$BUILD_DIR" --config Release --target all -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)"
     if [ $DO_INSTALL -eq 1 ]; then
         if sudo cmake --install "$BUILD_DIR" 2>&1 | tee -a "$MLOG" ; then
             printf "${OK} ${MAGENTA}hyprland-guiutils $tag${RESET} installed successfully.\n" 2>&1 | tee -a "$MLOG"

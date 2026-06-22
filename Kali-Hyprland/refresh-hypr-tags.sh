@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-REPO_ROOT=$(pwd)
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TAGS_FILE="$REPO_ROOT/hypr-tags.env"
 LOG_DIR="$REPO_ROOT/Install-Logs"
 mkdir -p "$LOG_DIR"

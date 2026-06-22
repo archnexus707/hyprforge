@@ -110,7 +110,7 @@ if git clone --depth=1 "$source_theme" "$SRC_DIR"; then
   printf "${NOTE} necessary for the new SDDM theme to work properly........\n"
 
   sudo mkdir -p /usr/local/share/fonts/JetBrainsMonoNerd && \
-  sudo cp -r "$HOME/.local/share/fonts/JetBrainsMonoNerd" /usr/local/share/fonts/JetBrainsMonoNerd
+  sudo cp -r "$HOME/.local/share/fonts/JetBrainsMonoNerd/"* /usr/local/share/fonts/JetBrainsMonoNerd/
 
   if [ $? -eq 0 ]; then
     echo "Fonts copied successfully."

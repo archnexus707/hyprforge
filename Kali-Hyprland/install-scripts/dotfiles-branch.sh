@@ -28,7 +28,7 @@ printf "${NOTE} Cloning and Installing ${SKY_BLUE}KooL's Hyprland Dots for Debia
 SRC_DIR="$SRC_ROOT/Hyprland-Dots-Debian"
 if [ -d "$SRC_DIR" ]; then
     cd "$SRC_DIR"
-    git stash && git pull
+    git stash && git pull && git stash pop || git pull
     chmod +x copy.sh
     ./copy.sh
 else
