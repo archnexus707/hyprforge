@@ -6,32 +6,41 @@ cd "$SCRIPT_DIR" || exit 1
 
 RESET='\033[0m'
 BOLD='\033[1m'
+DIM='\033[2m'
 RED='\033[38;5;196m'
 GREEN='\033[38;5;46m'
 YELLOW='\033[38;5;226m'
 CYAN='\033[38;5;51m'
 MAGENTA='\033[38;5;201m'
 ORANGE='\033[38;5;208m'
+PINK='\033[38;5;198m'
+NEON='\033[38;5;123m'
 
 banner() {
     clear
-    echo -e "${CYAN}"
-    cat <<'EOF'
-     ██████  ██     ██ ███    ███    ██   ██ ███████ 
-     ██   ██ ██     ██ ████  ████    ██   ██ ██      
-     ██   ██ ██  █  ██ ██ ████ ██    ███████ █████   
-     ██   ██ ██ ███ ██ ██  ██  ██    ██   ██ ██      
-     ██████   ███ ███  ██      ██ ██ ██   ██ ██      
-                                                       
-    ██   ██ ███████  ██████ ███████                    
-     ██ ██  ██      ██      ██                         
-      ███   █████   ██      █████                      
-      ██ ██  ██      ██      ██                         
-     ██   ██ ██       ██████ ███████                    
-EOF
-    echo -e "${MAGENTA}  cyberpunk tiling + compositing for Kali XFCE${RESET}"
-    echo -e "${ORANGE}  i3wm • picom • kitty • rofi • dunst${RESET}"
     echo
+    echo -e "${CYAN}${BOLD}"
+    cat <<'EOF'
+         ██████╗     ██╗    ██╗███╗   ███╗
+         ██╔══██╗    ██║    ██║████╗ ████║
+         ██║  ██║    ██║ █╗ ██║██╔████╔██║
+         ██║  ██║    ██║███╗██║██║╚██╔╝██║
+         ██████╔╝    ╚███╔███╔╝██║ ╚═╝ ██║
+         ╚═════╝      ╚══╝╚══╝ ╚═╝     ╚═╝
+          ██╗  ██╗███████╗ ██████╗███████╗
+          ╚██╗██╔╝██╔════╝██╔════╝██╔════╝
+           ╚███╔╝ █████╗  ██║     █████╗  
+           ██╔██╗ ██╔══╝  ██║     ██╔══╝  
+          ██╔╝ ██╗██║     ╚██████╗███████╗
+          ╚═╝  ╚═╝╚═╝      ╚═════╝╚══════╝
+EOF
+    echo -e "${RESET}"
+    echo
+    echo -e "  ${NEON}${BOLD}◆${RESET} ${CYAN}${BOLD}D_WM-XFCE${RESET}  ${DIM}cyberpunk tiling compositor for Kali XFCE${RESET}"
+    echo -e "  ${NEON}${BOLD}◆${RESET} ${ORANGE}i3wm${RESET} ${DIM}·${RESET} ${ORANGE}picom${RESET} ${DIM}·${RESET} ${ORANGE}kitty${RESET} ${DIM}·${RESET} ${ORANGE}rofi${RESET} ${DIM}·${RESET} ${ORANGE}dunst${RESET} ${DIM}·${RESET} ${ORANGE}zsh${RESET}"
+    echo -e "  ${NEON}${BOLD}◆${RESET} ${DIM}forged by${RESET} ${PINK}archnexus707${RESET} ${DIM}// hyprforge${RESET}"
+    echo
+    sleep 0.1
 }
 
 die() { echo -e "${RED}[FATAL]${RESET} $*"; exit 1; }
