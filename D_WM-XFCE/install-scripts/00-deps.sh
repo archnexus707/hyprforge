@@ -27,7 +27,7 @@ PACKAGES=(
     pulseaudio-utils
     playerctl
     brightnessctl
-    policykit-1-gnome
+    papirus-icon-theme
     network-manager-gnome
     thunar
 )
