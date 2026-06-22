@@ -113,7 +113,7 @@ if git clone --depth=1 https://github.com/JaKooLit/ags_v1.9.0.git "$SRC_DIR"; th
     cd "$SRC_DIR" || exit 1
     BUILD_DIR="$BUILD_ROOT/ags_v1.9.0"
     mkdir -p "$BUILD_DIR"
-    npm install
+    npm install || { echo "${ERROR} npm install failed"; exit 1; }
     meson setup "$BUILD_DIR"
    if sudo meson install -C "$BUILD_DIR" 2>&1 | tee -a "$MLOG"; then
     printf "\n${OK} ${YELLOW}Aylur's GTK shell $ags_tag${RESET} installed successfully.\n" 2>&1 | tee -a "$MLOG"
@@ -123,7 +123,7 @@ if git clone --depth=1 https://github.com/JaKooLit/ags_v1.9.0.git "$SRC_DIR"; th
 
     patch_ags_launcher() {
       local target="$1"
-      if ! sudo test -f "$target"; then
+      if [ ! -f "$target" ]; then
         return 1
       fi
 

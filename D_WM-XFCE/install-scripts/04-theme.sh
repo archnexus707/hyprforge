@@ -22,7 +22,7 @@ if [ ! -d "$THEME_DIR/Catppuccin-Mocha-Standard-Mauve-Dark" ]; then
     # Catppuccin renamed assets in v1.0.3 — use explicit version URL
     curl -fsSL "https://github.com/catppuccin/gtk/releases/download/v1.0.3/catppuccin-mocha-mauve-standard+default.zip" \
         -o "$tmp/catppuccin.zip" 2>"$curl_err" || {
-        warn "Catppuccin theme download failed (${curl_err:+\"$(cat "$curl_err")\"}) — using Arc-Dark fallback"
+        warn "Catppuccin theme download failed ($(cat "$curl_err" 2>/dev/null)) -- using Arc-Dark fallback"
         rm -rf "$tmp" "$curl_err"
         log "using Arc-Dark GTK theme"
     }
@@ -43,7 +43,7 @@ if [ ! -d "$CURSOR_DIR" ]; then
     curl -fsSL "https://github.com/ful1e5/Bibata_Cursor/releases/latest/download/Bibata-Modern-Ice.tar.xz" \
         -o "$tmp/bibata.tar.xz" 2>"$curl_err" && \
         tar -xf "$tmp/bibata.tar.xz" -C "$HOME/.icons" 2>/dev/null || \
-        warn "Bibata cursor download failed (${curl_err:+\"$(cat "$curl_err")\"})"
+        warn "Bibata cursor download failed ($(cat "$curl_err" 2>/dev/null))"
     rm -rf "$tmp" "$curl_err"
 fi
 

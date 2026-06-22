@@ -41,12 +41,17 @@ for plug in zsh-autosuggestions zsh-syntax-highlighting; do
     git clone --depth=1 "$repo" "$dest" >>/dev/null 2>&1 || warn "$plug clone failed"
 done
 
-# make zsh default (ask first)
+# make zsh default (ask first, only when TTY available)
 if [ "$(basename "$SHELL")" != "zsh" ] && command -v zsh >/dev/null 2>&1; then
-    printf "Set zsh as default shell? [y/N]: "
-    read -r ans
-    [ "$ans" = "y" ] || [ "$ans" = "Y" ] || [ "$ans" = "yes" ] && \
-        chsh -s "$(command -v zsh)" "$USER" || warn "chsh failed (try running manually: chsh -s \$(command -v zsh))"
+    if [ -t 0 ] && [ "${NON_INTERACTIVE:-0}" != "1" ]; then
+        printf "Set zsh as default shell? [y/N]: "
+        read -r ans
+        if [ "$ans" = "y" ] || [ "$ans" = "Y" ] || [ "$ans" = "yes" ]; then
+            chsh -s "$(command -v zsh)" "$USER" || warn "chsh failed (try running manually: chsh -s \$(command -v zsh))"
+        fi
+    else
+        log "skipping chsh — non-interactive mode (run: chsh -s \$(command -v zsh))"
+    fi
 fi
 
 ok "terminal stack complete"

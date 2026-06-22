@@ -106,6 +106,7 @@ if [ -f "$PRESET_FILE" ]; then
     log "loaded preset: $PRESET_FILE"
 fi
 
+: "${deps="ON"}"
 : "${i3wm="ON"}"
 : "${picom="ON"}"
 : "${terminal="ON"}"
@@ -114,7 +115,7 @@ fi
 
 SCRIPTS="$SCRIPT_DIR/install-scripts"
 
-run_phase "dependencies"    "$SCRIPTS/00-deps.sh"     ON              || die "deps failed — cannot continue"
+run_phase "dependencies"    "$SCRIPTS/00-deps.sh"     "$deps"         || die "deps failed — cannot continue"
 run_phase "i3wm"           "$SCRIPTS/01-i3.sh"        "$i3wm"         || warn "i3 phase had issues"
 run_phase "picom"          "$SCRIPTS/02-picom.sh"     "$picom"        || warn "picom phase had issues"
 run_phase "terminal+zsh"   "$SCRIPTS/03-terminal.sh"  "$terminal"     || warn "terminal phase had issues"

@@ -134,9 +134,12 @@ printf "\n%.0s" {1..1}
 # Check if yad is installed
 if ! command -v yad &>/dev/null; then
     echo "${INFO} Installing ${YELLOW}YAD from assets${RESET} ..."
-    sudo dpkg -i assets/yad_0.40.0-1+b2_amd64.deb
-    sudo apt install -f -y
-    echo "${INFO} ${YELLOW}YAD from assets${RESET} succesfully installed ..."
+    if sudo dpkg -i assets/yad_0.40.0-1+b2_amd64.deb 2>/dev/null; then
+        sudo apt install -f -y
+        echo "${INFO} ${YELLOW}YAD from assets${RESET} succesfully installed ..."
+    else
+        echo "${ERROR} YAD deb install failed — continuing without YAD" | tee -a "$LOG"
+    fi
 fi
 
 printf "\n%.0s" {1..2}
