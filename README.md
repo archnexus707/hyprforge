@@ -27,7 +27,6 @@
 ![Distro](https://img.shields.io/badge/distro-Kali_rolling-00ff9c?style=for-the-badge&labelColor=0a0a0a&logo=kalilinux&logoColor=00ff9c)
 ![Compositor](https://img.shields.io/badge/wayland-Hyprland-00ff9c?style=for-the-badge&labelColor=0a0a0a)
 ![Fallback](https://img.shields.io/badge/x11-i3wm_%2B_picom-00ff9c?style=for-the-badge&labelColor=0a0a0a)
-![Audit](https://img.shields.io/badge/audit-31_bugs_fixed-00ff9c?style=for-the-badge&labelColor=0a0a0a)
 
 <br/>
 
@@ -46,19 +45,17 @@
    │   Wayland · Hyprland          │    │   X11 · i3wm · picom         │
    │   bare-metal + real GPU       │    │   VMware / VirtualBox safe   │
    │   hyprlock · ags · blur       │    │   apt-installable · light    │
-   │   built from source (~5GB)    │    │   modular 8-phase installer  │
-   │   screenshots: grim+slurp     │    │   screenshots: maim+flameshot │
-   │   60+ build scripts           │    │   6 phase-scripts + 6 tools   │
+   │   built from source           │    │   8-phase modular installer  │
    └───────────────┬───────────────┘    └──────────────┬───────────────┘
                    │                                   │
                    └────────── shared brand ───────────┘
                                 archnexus707
                               accent #00ff9c
-                 cyberpunk neon · vim keybinds · interactive tours
-                   doctor.sh diagnostics · idempotent installs
+                       cyberpunk neon · vim keybinds
+                       interactive tours · diagnostics
 ```
 
-Both stacks share the same neon `#00ff9c` identity, vim-style keybind conventions, Tokyo Night + Catppuccin palettes, structured logging, and cyberpunk interactive welcome experiences. Muscle memory transfers — pick the stack that matches your hardware.
+Both stacks share neon `#00ff9c`, vim-style keybinds, Tokyo Night + Catppuccin palettes, and cyberpunk interactive welcome experiences. Muscle memory transfers — pick the stack that matches your hardware.
 
 ---
 
@@ -70,32 +67,30 @@ cd ~/hyprforge
 
 # ▸ Bare-metal Kali with a real GPU → Hyprland (Wayland)
 cd Kali-Hyprland
-./install.sh                  # interactive phased installer
+./install.sh
 
 # ▸ Kali in VMware / VirtualBox → i3wm + XFCE (X11)
 cd ../D_WM-XFCE
-./setup.sh                    # quick dependency bootstrap (optional)
-./install.sh                  # 8-phase cyberpunk rice
-./doctor.sh                   # 21-check system diagnostic
-./welcome.sh                  # interactive neon tour
+./setup.sh          # quick dependency bootstrap (optional)
+./install.sh        # full cyberpunk rice
+./doctor.sh         # system diagnostic
+./welcome.sh        # interactive tour
 ```
 
-> **▲ heads-up** — Both installers are **idempotent** (safe to re-run). D_WM-XFCE adds an i3 session entry alongside your existing XFCE desktop — nothing is removed. Kali-Hyprland replaces your display manager and session configs (see its README for recovery).
+> **▲ heads-up** — Both installers are **idempotent** (safe to re-run). D_WM-XFCE adds an i3 session — XFCE stays untouched. Kali-Hyprland replaces session configs (see its README for recovery).
 
 ---
 
-## ◆ Which stack do I want?
+## ◆ Which stack?
 
 | | **Kali-Hyprland/** | **D_WM-XFCE/** |
 |---|---|---|
-| **Target** | Bare-metal Kali with real GPU | Kali in VMware / VirtualBox / KVM |
+| **Target** | Bare-metal Kali + GPU | VMware / VirtualBox / KVM |
 | **Display** | Wayland (Hyprland) | X11 (i3wm + picom) |
-| **Aesthetic** | Real Hyprland: blur, animations, hyprlock | Tokyo Night i3wm + picom blur + rofi + dunst |
+| **Aesthetic** | Blur, animations, hyprlock | Tokyo Night + picom blur + rofi + dunst |
 | **GPU needed** | OpenGL ≥ 3.3 | None — works on `vmwgfx` |
-| **Risk** | Replaces session + display manager | Adds i3 session — XFCE untouched |
-| **Build** | From source (~5 GB) | All apt except oh-my-zsh |
+| **Risk** | Replaces DM + session configs | Adds i3 session — XFCE untouched |
 | **Recovery** | Pick another session at greeter | Pick *Xfce Session* at greeter |
-| **Tooling** | doctor.sh, recovery.sh, update-hyprland.sh, uninstall.sh | doctor.sh, setup.sh, welcome.sh, spawn.sh |
 
 > **Rule of thumb:** if `systemd-detect-virt` returns anything other than `none`, install **D_WM-XFCE**. It auto-detects VMware and switches to a safe xrender compositor backend.
 
@@ -103,42 +98,25 @@ cd ../D_WM-XFCE
 
 ## ▸ D_WM-XFCE
 
-### Tool belt
+### Installation
 
 ```bash
-D_WM-XFCE/
-├── install.sh           ● 8-phase modular installer (idempotent)
-├── setup.sh             ● quick apt dependency bootstrap
-├── doctor.sh            ● 21-check system health diagnostic
-├── welcome.sh           ● post-install interactive cyberpunk tour
-│                          (system scan, rice integrity, keybinds, pro tips)
-├── spawn.sh             ● session launcher with neon boot sequence
-│                          (auto-starts picom, dunst, nm-applet, polkit)
-├── preset.sh            ● feature toggles
-├── install-scripts/
-│   ├── 00-deps.sh       ● apt package installation (idempotent)
-│   ├── 01-i3.sh         ● greeter session registration
-│   ├── 02-picom.sh      ● compositor (auto-detects VMware → xrender)
-│   ├── 03-terminal.sh   ● oh-my-zsh + powerlevel10k + plugins
-│   ├── 04-theme.sh      ● Catppuccin GTK + Bibata cursor + xfconf
-│   └── 05-dotfiles.sh   ● deploy configs to ~/.config/
-├── dotfiles/            ● i3 · kitty · picom · rofi · dunst · zsh
-└── wallpaper/           ● cyberpunk.png (1920×1080)
+cd D_WM-XFCE
+./setup.sh       # quick apt bootstrap (optional — install.sh runs deps too)
+./install.sh     # full 8-phase cyberpunk rice
+./welcome.sh     # interactive neon tour (system scan, keybinds, tips)
 ```
 
-### Install stack
+### Interactive tools
 
-| Layer | Components |
-|-------|-----------|
-| **WM** | i3-wm + i3status + i3lock |
-| **Compositor** | picom (GLX bare metal / xrender VMware) |
-| **Terminal** | kitty (Tokyo Night, 92% opacity, powerline tabs) |
-| **Shell** | zsh + oh-my-zsh + powerlevel10k + plugins |
-| **Launcher** | rofi (cyberpunk themed, 3 modes) |
-| **Notifications** | dunst (3 urgency levels, neon frame) |
-| **Theme** | Catppuccin-Mocha-Mauve GTK + Bibata-Modern-Ice cursor + Papirus icons |
-| **CLI** | fastfetch · eza · bat · btop · maim · xclip · flameshot |
-| **Wallpaper** | 1920×1080 cyberpunk PNG |
+| Command | What it does |
+|---------|-------------|
+| `./install.sh` | 8-phase modular installer — idempotent, safe to re-run |
+| `./setup.sh` | Quick dependency bootstrapper — apt packages + i3 session entry |
+| `./doctor.sh` | 21-check diagnostic — packages, dotfiles, shell, themes, fonts, VMware detection |
+| `./welcome.sh` | Post-install cyberpunk tour — system scan, rice integrity, keybind quick-ref, pro tips |
+| `./spawn.sh` | Session launcher with neon boot sequence — starts picom, dunst, nm-applet, polkit |
+| `./preset.sh` | Feature toggles — edit before install to skip phases |
 
 ### Keybinds
 
@@ -160,118 +138,104 @@ D_WM-XFCE/
 | `Print` | Screenshot area → clipboard |
 | `SUPER+Print` | Screenshot (flameshot GUI) |
 
+### What gets installed
+
+| Layer | Components |
+|-------|-----------|
+| **WM** | i3-wm + i3status + i3lock |
+| **Compositor** | picom (GLX bare metal / xrender VMware) |
+| **Terminal** | kitty (Tokyo Night palette, 92% opacity) |
+| **Shell** | zsh + oh-my-zsh + powerlevel10k + plugins |
+| **Launcher** | rofi (cyberpunk themed, drun/window/run) |
+| **Notifications** | dunst (3 urgency levels, neon frame) |
+| **Theme** | Catppuccin-Mocha-Mauve GTK + Bibata-Modern-Ice cursor + Papirus icons |
+| **CLI** | fastfetch · eza · bat · btop · maim · xclip · flameshot |
+| **Wallpaper** | 1920×1080 cyberpunk PNG |
+
 ---
 
 ## ▸ Kali-Hyprland
 
-Full Wayland compositor stack compiled from source on Kali Linux. Fork of [JaKooLit's Debian-Hyprland](https://github.com/JaKooLit/Debian-Hyprland). **31 bugs fixed** in latest audit (19 critical build/runtime bugs + 12 D_WM-XFCE bugs).
+### Installation
 
 ```bash
-Kali-Hyprland/
-├── install.sh              ● interactive phased installer
-├── update-hyprland.sh      ● per-component rebuild
-├── doctor.sh               ● post-install diagnostic
-├── recovery.sh             ● TTY2 rescue menu
-├── uninstall.sh            ● full removal
-├── dry-run-build.sh        ● CI compile-only runner
-├── preset.sh               ● feature selection
-├── hypr-tags.env           ● version pins for all Hypr* packages
-├── install-scripts/        ● 60+ build/install phase scripts
-│   ├── hyprland.sh          ● Hyprland from source
-│   ├── hyprlock.sh          ● screen locker
-│   ├── hypridle.sh          ● idle daemon
-│   ├── swww.sh              ● animated wallpapers
-│   ├── wallust.sh           ● palette generator
-│   ├── rofi-wayland.sh      ● Wayland-native launcher
-│   ├── ags.sh               ● Aylur's GTK Shell (widgets)
-│   ├── nvidia.sh            ● NVIDIA driver + CUDA
-│   ├── vmware.sh            ● VM fallback drop-in
-│   ├── sddm.sh              ● SDDM display manager
-│   └── ...                  ● and 45+ more
-├── assets/                 ● fastfetch configs, fonts, GTK prefs, patches
-└── KALI-CHANGES.md          ● line-by-line delta from upstream
+cd Kali-Hyprland
+./install.sh                  # interactive phased installer
+./update-hyprland.sh          # per-component rebuild (after git pull)
 ```
 
-### Recent audit — 19 bugs fixed (ce4fd6a)
+### Interactive tools
 
-| Severity | Count | Key fix |
-|----------|-------|---------|
-| **CRITICAL** | 7 | `run_cmd()` broken in nvidia.sh (all CUDA/GRUB ops were no-ops), log collisions, cmake parallelism broken in 7 scripts, APT `.sources` format ignored, undefined variables, `re_install_package` failing on clean installs |
-| **HIGH** | 6 | Relative paths breaking CI, double-nested font directories, `mv` breaking cargo tracking, fastfetch configs overwritten |
-| **MEDIUM** | 6 | Unquoted `rm -rf`, 34 unnecessary sleeps in CI, `--help` broken, sudo keep-alive orphan, fragile distro detection |
+| Command | What it does |
+|---------|-------------|
+| `./install.sh` | Interactive installer — builds Hyprland + 60+ companions from source |
+| `./install.sh --tty` | TTY mode — for remote/CI or terminals without whiptail |
+| `./install.sh --preset preset.sh` | Non-interactive run from preset file |
+| `./doctor.sh` | Post-install diagnostic — checks binaries, libs, configs, keybinds |
+| `./update-hyprland.sh` | Rebuild Hyprland stack without full reinstall |
+| `./update-hyprland.sh --dry-run` | Compile-only sanity check |
+| `./update-hyprland.sh --fetch-latest` | Refresh version tags to latest, then build |
+| `./dry-run-build.sh` | CI compile-only runner — tests all builds without installing |
+| `./recovery.sh` | TTY2 rescue menu — restore session when Hyprland won't start |
+| `./uninstall.sh` | Full removal — packages, configs, source dirs |
+| `./preset.sh` | Feature selection — GTK themes, NVIDIA, SDDM, dotfiles, bluetooth |
+| `./hypr-tags.env` | Version pins — edit to lock specific Hypr* package versions |
 
-> See [`Kali-Hyprland/README.md`](Kali-Hyprland/README.md) for full docs and [`KALI-CHANGES.md`](Kali-Hyprland/KALI-CHANGES.md) for the complete fork delta.
+### Keybinds
+
+| Binding | Action |
+|---------|--------|
+| `SUPER+Return` | Terminal (kitty) |
+| `SUPER+D` | App launcher (rofi) |
+| `SUPER+Q` | Close window |
+| `SUPER+F` | Fullscreen |
+| `SUPER+Space` | Float toggle |
+| `SUPER+1..0` | Switch workspace |
+| `SUPER+Shift+1..0` | Move to workspace |
+| `SUPER+H/J/K/L` | Vim focus |
+| `SUPER+Shift+H/J/K/L` | Vim move |
+| `SUPER+H` or `SUPER+/` | Live keybind cheatsheet |
+| `SUPER+Shift+Q` | Power menu |
+| `SUPER+A` | Audio sink/source picker |
+| `SUPER+W` | WiFi picker |
+| `SUPER+B` | Bluetooth picker |
+| `SUPER+V` | Volume OSD |
+| `SUPER+X` | Brightness OSD |
+| `Print` | Region screenshot |
+| `SUPER+Print` | Record screen |
+
+### More details
+
+See [`Kali-Hyprland/README.md`](Kali-Hyprland/README.md) for full documentation and [`KALI-CHANGES.md`](Kali-Hyprland/KALI-CHANGES.md) for the fork delta from upstream.
 
 ---
 
 ## ◆ Installing both environments
 
-You can install **both** stacks on the same Kali machine. D_WM-XFCE adds a session entry — it never touches i3 or Hyprland configs. Kali-Hyprland takes over the compositor layer. Switch between them at the greeter:
+You can install **both** stacks on the same Kali machine. D_WM-XFCE just adds a session entry — it never conflicts with Hyprland. Switch between them at the greeter:
 
 ```bash
-# Setup both
 cd ~/hyprforge
 
-# Install XFCE+i3 side first (safe, non-destructive)
+# Install XFCE+i3 side (safe, non-destructive)
 cd D_WM-XFCE && ./setup.sh && ./install.sh
 
-# Then install Hyprland side (will swap DM session)
+# Install Hyprland side
 cd ../Kali-Hyprland && ./install.sh
 
-# Post-install check for both
+# Post-install health checks
 cd ../D_WM-XFCE && ./doctor.sh
 cd ../Kali-Hyprland && ./doctor.sh
 ```
 
-At the login greeter, pick:
+At login, pick:
 - **i3 Cyberpunk** → D_WM-XFCE (X11, VM-safe)
 - **Hyprland** → Kali-Hyprland (Wayland, GPU-accelerated)
-- **Xfce Session** → stock XFCE (fallback, always available)
-
----
-
-## ◆ Safety design
-
-### D_WM-XFCE
-- **Idempotent** — re-run safely; installed packages are skipped
-- **VMware auto-detection** — switches picom to xrender backend automatically
-- **`.bak` rollback** — existing configs get `.bak.<timestamp>` before overwrite
-- **XFCE never touched** — adds an i3 session entry, leaves XFCE intact
-- **Non-root** — refuses root execution; uses `sudo` only where needed
-- **All scripts `bash -n` clean** — syntax-validated on every commit
-
-### Kali-Hyprland
-- **`--dry-run` everywhere** — preview apt, file-writes, and systemctl changes
-- **Manifest-backed rollback** — all changes logged to `Install-Logs/`
-- **Display manager is sacred** — LightDM is disabled, never purged
-- **NVIDIA build is VM-aware** — skips kernel module builds inside VMs
-- **Kali APT sources untouched** — source rewriter early-returns when `ID=kali`
-- **`.sources` (deb822) format supported** — works on modern Kali/Debian
+- **Xfce Session** → stock XFCE (always available as fallback)
 
 ---
 
 ## ▸ FAQ
-
-<details>
-<summary><b>◇ Is this a fork of JaKooLit's Debian-Hyprland?</b></summary>
-
-`Kali-Hyprland/` started as a fork with Kali-specific patches. Every functional delta is documented in [`KALI-CHANGES.md`](Kali-Hyprland/KALI-CHANGES.md). `D_WM-XFCE/` is original work.
-
-</details>
-
-<details>
-<summary><b>◇ Can I run Kali-Hyprland in a VM?</b></summary>
-
-`vmware.sh` detects the guest and writes a software-rendering fallback. But Hyprland on `vmwgfx` is fragile. **Install `D_WM-XFCE` instead** — it's designed for virtualized environments.
-
-</details>
-
-<details>
-<summary><b>◇ What if picom doesn't start / I get a black screen in i3?</b></summary>
-
-Check VMware detection: `systemd-detect-virt`. If in VMware, run `./install-scripts/02-picom.sh` to redeploy the xrender config. Verify: `command -v picom`.
-
-</details>
 
 <details>
 <summary><b>◇ How do I update?</b></summary>
@@ -289,11 +253,18 @@ cd ../Kali-Hyprland && ./update-hyprland.sh
 </details>
 
 <details>
-<summary><b>◇ Can I customize keybinds?</b></summary>
+<summary><b>◇ Can I customise keybinds?</b></summary>
 
-**D_WM-XFCE:** Edit `~/.config/i3/config` directly. Re-run install with `dotfiles="OFF"` in `preset.sh` to skip dotfile deployment.
+**D_WM-XFCE:** Edit `~/.config/i3/config`. Re-run install with `dotfiles="OFF"` in `preset.sh` to skip config overwrite.
 
 **Kali-Hyprland:** Write binds to `~/.config/hypr/UserConfigs/UserKeybinds.conf`.
+
+</details>
+
+<details>
+<summary><b>◇ What if picom doesn't start / black screen in i3?</b></summary>
+
+Check VMware: `systemd-detect-virt`. If in VMware, run `./install-scripts/02-picom.sh` to redeploy the xrender config. Verify: `command -v picom`.
 
 </details>
 
@@ -301,9 +272,9 @@ cd ../Kali-Hyprland && ./update-hyprland.sh
 <summary><b>◇ Something broke — how do I check?</b></summary>
 
 ```bash
-# Full diagnostic for both stacks
-cd D_WM-XFCE && ./doctor.sh      # 21 checks (packages, dotfiles, shell, themes, fonts, VMware)
-cd ../Kali-Hyprland && ./doctor.sh  # binaries, libs, configs, keybind drop-in
+# Full diagnostic for either stack
+cd D_WM-XFCE && ./doctor.sh      # 21 checks
+cd ../Kali-Hyprland && ./doctor.sh
 ```
 
 </details>
@@ -320,7 +291,7 @@ If hyprforge made your desktop glow:
 
 ## ◆ Special thanks
 
-**[JaKooLit](https://github.com/JaKooLit)** — his Debian-Hyprland project inspired the Kali-Hyprland fork. The Hyprland community wouldn't be what it is without his work.
+**[JaKooLit](https://github.com/JaKooLit)** — his Debian-Hyprland project inspired the Kali-Hyprland fork.
 
 Hyprland: [hyprwm](https://github.com/hyprwm). Themes: [Tokyo Night](https://github.com/folke/tokyonight.nvim), [Catppuccin](https://github.com/catppuccin).
 
