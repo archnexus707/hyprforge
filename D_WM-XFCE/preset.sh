@@ -2,6 +2,7 @@
 # D_WM-XFCE preset toggles. Set to ON or OFF.
 # Edit before running ./install.sh
 
+deps="ON"       # apt packages + system dependencies
 i3wm="ON"        # i3 tiling window manager + rofi + dunst
 picom="ON"       # compositor (shadows, blur, fade, opacity)
 terminal="ON"    # kitty terminal + zsh + oh-my-zsh + fastfetch

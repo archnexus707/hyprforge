@@ -9,8 +9,8 @@ A Hyprland desktop installer for **bare-metal Kali Linux** — built so Kali's `
 | | Kali-Hyprland (this repo) | [D_WM-XFCE](../D_WM-XFCE/) |
 |---|---|---|
 | **Target** | Bare-metal Kali with a working GPU | Kali running inside VMware / VirtualBox |
-| **Display server** | Wayland (Hyprland compositor) | X11 (XFCE session + i3-gaps + picom) |
-| **Look** | Real Hyprland: blur, animations, hyprlock, ags | Hyprland *aesthetic* via i3-gaps + picom-ftlabs |
+| **Display server** | Wayland (Hyprland compositor) | X11 (i3wm + picom) |
+| **Look** | Real Hyprland: blur, animations, hyprlock, ags | Tokyo Night i3wm + picom blur + rofi + dunst |
 | **GPU requirement** | Working OpenGL ≥ 3.3 (Intel / AMD / NVIDIA) | None — works on `vmwgfx` |
 | **Risk profile** | Replaces session; can swap display manager | Adds a session option; leaves XFCE intact |
 

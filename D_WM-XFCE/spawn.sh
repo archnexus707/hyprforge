@@ -88,7 +88,7 @@ start_if_dead() {
         echo -e "${TAG} ${GREEN}■${RESET} ${name} ${DIM}already running${RESET}"
     else
         echo -ne "${TAG} ${CYAN}◌${RESET} ${name} ${DIM}launching...${RESET}"
-        eval "$cmd" &
+        $cmd &
         sleep 0.3
         if pgrep -x "$name" >/dev/null 2>&1; then
             echo -e "\r${TAG} ${GREEN}■${RESET} ${name} ${DIM}online${RESET}"
@@ -110,11 +110,13 @@ else
 fi
 
 # polkit agent
-POLKIT_PID=$(pgrep -f polkit-gnome 2>/dev/null || true)
+POLKIT_PID=$(pgrep -f polkit 2>/dev/null || true)
 if [ -n "$POLKIT_PID" ]; then
     echo -e "${TAG} ${GREEN}■${RESET} polkit-agent ${DIM}already running${RESET}"
 else
-    /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 2>/dev/null &
+    for a in /usr/lib/polkit-1/polkit-agent-helper-1 /usr/libexec/polkit-kde-authentication-agent-1; do
+        [ -x "$a" ] && { "$a" 2>/dev/null & break; }
+    done
 fi
 
 echo

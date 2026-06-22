@@ -45,7 +45,7 @@
    │   Wayland · Hyprland          │    │   X11 · i3wm · picom         │
    │   bare-metal + real GPU       │    │   VMware / VirtualBox safe   │
    │   hyprlock · ags · blur       │    │   apt-installable · light    │
-   │   built from source           │    │   8-phase modular installer  │
+   │   built from source           │    │   6-phase modular installer  │
    └───────────────┬───────────────┘    └──────────────┬───────────────┘
                    │                                   │
                    └────────── shared brand ───────────┘
@@ -103,7 +103,7 @@ cd ../D_WM-XFCE
 ```bash
 cd D_WM-XFCE
 ./setup.sh       # quick apt bootstrap (optional — install.sh runs deps too)
-./install.sh     # full 8-phase cyberpunk rice
+./install.sh     # full 6-phase cyberpunk rice
 ./welcome.sh     # interactive neon tour (system scan, keybinds, tips)
 ```
 
@@ -111,9 +111,9 @@ cd D_WM-XFCE
 
 | Command | What it does |
 |---------|-------------|
-| `./install.sh` | 8-phase modular installer — idempotent, safe to re-run |
+| `./install.sh` | 6-phase modular installer — idempotent, safe to re-run |
 | `./setup.sh` | Quick dependency bootstrapper — apt packages + i3 session entry |
-| `./doctor.sh` | 21-check diagnostic — packages, dotfiles, shell, themes, fonts, VMware detection |
+| `./doctor.sh` | 40+ check diagnostic — packages, dotfiles, shell, themes, fonts, VMware |
 | `./welcome.sh` | Post-install cyberpunk tour — system scan, rice integrity, keybind quick-ref, pro tips |
 | `./spawn.sh` | Session launcher with neon boot sequence — starts picom, dunst, nm-applet, polkit |
 | `./preset.sh` | Feature toggles — edit before install to skip phases |
@@ -130,7 +130,7 @@ cd D_WM-XFCE
 | `SUPER+space` | Float toggle |
 | `SUPER+1..0` | Switch workspace |
 | `SUPER+Shift+1..0` | Move window to workspace |
-| `SUPER+h/j/k/l` | Vim-style focus |
+| `SUPER+h/j/k/;` | Vim-style focus |
 | `SUPER+Shift+h/j/k/l` | Vim-style move |
 | `SUPER+Shift+q` | Logout menu (rofi) |
 | `SUPER+Shift+c` | Reload i3 config |
