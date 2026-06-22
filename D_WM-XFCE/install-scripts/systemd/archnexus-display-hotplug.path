@@ -1,9 +1,0 @@
-[Unit]
-Description=archnexus707 display hot-plug watcher
-
-[Path]
-PathChanged=/sys/class/drm
-TriggerLimitBurst=20
-
-[Install]
-WantedBy=graphical-session.target
