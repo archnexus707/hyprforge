@@ -142,7 +142,7 @@ bindsym $mod+Print                exec --no-startup-id flameshot gui
 exec_always --no-startup-id picom --config ~/.config/picom/picom.conf
 exec_always --no-startup-id dunst
 exec        --no-startup-id nm-applet
-exec        --no-startup-id sh -c 'for agent in /usr/lib/polkit-1/polkit-agent-helper-1 /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 /usr/libexec/polkit-gnome-authentication-agent-1 /usr/lib/x86_64-linux-gnu/polkit-kde-authentication-agent-1; do [ -x "$agent" ] && exec "$agent"; done; true'
+exec        --no-startup-id sh -c 'for a in /usr/lib/polkit-1/polkit-agent-helper-1 /usr/libexec/polkit-gnome-authentication-agent-1; do [ -x "$a" ] && exec "$a"; done; true'
 exec        --no-startup-id feh --bg-fill ~/.config/i3/wallpaper.png 2>/dev/null || true
 
 # -- bar -----------------------------------------------------------------------
@@ -151,7 +151,6 @@ bar {
     position top
     font pango:monospace 12
     tray_output primary
-    separator_symbol ""
     colors {
         background #0d0d11
         statusline #c0caf5
