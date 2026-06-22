@@ -1,69 +1,65 @@
-# i3 config — D_WM-XFCE Hyprland-style keybinds + gaps.
-# This config uses i3 (mainline ≥ 4.22) gaps support. Color scheme is included
-# from ~/.config/i3/theme — the dwm-theme switcher symlinks that to one of
-# themes/<name>/i3.colors.
+# i3 config — D_WM-XFCE cyberpunk rice
+# Clean, standalone i3 session. Works alongside XFCE, not inside it.
 
-# ----- mod key ---------------------------------------------------------------
 set $mod Mod4
 
-# ----- fonts -----------------------------------------------------------------
-font pango:JetBrainsMono Nerd Font 10
+font pango:monospace 10
 
-# ----- workspace names -------------------------------------------------------
-set $ws1  "1: 󰈹"
-set $ws2  "2: "
-set $ws3  "3: "
-set $ws4  "4: "
-set $ws5  "5: "
-set $ws6  "6: "
-set $ws7  "7: "
-set $ws8  "8: "
-set $ws9  "9: "
-set $ws10 "10: "
+# ── workspace names ────────────────────────────────────────────────────────────
+set $ws1  "1:"
+set $ws2  "2:"
+set $ws3  "3:"
+set $ws4  "4:"
+set $ws5  "5:"
+set $ws6  "6:"
+set $ws7  "7:"
+set $ws8  "8:"
+set $ws9  "9:"
+set $ws10 "10:"
 
-# ----- gaps & borders --------------------------------------------------------
-gaps inner 10
-gaps outer 4
-smart_gaps off
+# ── gaps & borders ────────────────────────────────────────────────────────────
+gaps inner 12
+gaps outer 6
+smart_gaps on
 smart_borders on
 default_border pixel 2
 default_floating_border pixel 2
 hide_edge_borders smart
 
-# ----- floating defaults -----------------------------------------------------
-for_window [class="Pavucontrol"]       floating enable
-for_window [class="Nm-connection-editor"] floating enable
-for_window [class="Blueman-manager"]   floating enable
-for_window [title="Picture in picture"] floating enable, sticky enable
-for_window [window_role="pop-up"]      floating enable
+# ── floating windows ──────────────────────────────────────────────────────────
+for_window [class="Pavucontrol"]             floating enable
+for_window [class="Nm-connection-editor"]    floating enable
+for_window [class="Blueman-manager"]         floating enable
+for_window [class="Lxappearance"]            floating enable
+for_window [class="Xfce4-settings-manager"]  floating enable
+for_window [window_role="pop-up"]            floating enable
+for_window [window_role="task_dialog"]       floating enable
 
-# ----- assigned workspaces ---------------------------------------------------
+# ── assigned workspaces ───────────────────────────────────────────────────────
 assign [class="firefox"]  $ws2
 assign [class="kitty"]    $ws1
 assign [class="thunar"]   $ws4
 
-# ----- launchers / app keybinds ---------------------------------------------
+# ── app launchers ─────────────────────────────────────────────────────────────
 bindsym $mod+Return       exec kitty
 bindsym $mod+r            exec --no-startup-id rofi -show drun
-# bindsym $mod+Shift+r      exec --no-startup-id rofi -show run  (overridden by archnexus-screenrecord)
+bindsym $mod+d            exec --no-startup-id rofi -show drun
 bindsym $mod+Tab          exec --no-startup-id rofi -show window
-bindsym $mod+e            exec --no-startup-id thunar
-bindsym $mod+b            exec --no-startup-id firefox
-# bindsym Print             exec --no-startup-id flameshot gui  (overridden by archnexus-shot screen)
+bindsym $mod+e            exec thunar
+bindsym $mod+b            exec firefox
 bindsym $mod+l            exec --no-startup-id i3lock -c 000000
-bindsym $mod+Shift+t      exec --no-startup-id ~/.local/bin/dwm-theme rofi
 
-# ----- window control --------------------------------------------------------
+# ── window control ────────────────────────────────────────────────────────────
 bindsym $mod+q            kill
 bindsym $mod+f            fullscreen toggle
 bindsym $mod+space        floating toggle
 bindsym $mod+Shift+space  focus mode_toggle
 
-# focus (vim-style h j k l, plus arrows)
-# bindsym $mod+h            focus left  (overridden by archnexus-cheatsheet)
+# focus
+bindsym $mod+h            focus left
 bindsym $mod+j            focus down
 bindsym $mod+k            focus up
-bindsym $mod+l            focus right
+bindsym $mod+semicolon    focus right
 bindsym $mod+Left         focus left
 bindsym $mod+Down         focus down
 bindsym $mod+Up           focus up
@@ -73,22 +69,19 @@ bindsym $mod+Right        focus right
 bindsym $mod+Shift+h      move left
 bindsym $mod+Shift+j      move down
 bindsym $mod+Shift+k      move up
-bindsym $mod+Shift+l      move right
+bindsym $mod+Shift+semicolon move right
 bindsym $mod+Shift+Left   move left
 bindsym $mod+Shift+Down   move down
 bindsym $mod+Shift+Up     move up
 bindsym $mod+Shift+Right  move right
 
-# split orientation
-# bindsym $mod+v            split v  (overridden by archnexus-clip)
-bindsym $mod+Shift+v      split h
-
 # layout
 bindsym $mod+s            layout stacking
-# bindsym $mod+w            layout tabbed  (overridden by archnexus-wifi)
-# bindsym $mod+x            layout toggle split  (overridden by archnexus-power)
+bindsym $mod+w            layout tabbed
+bindsym $mod+Shift+v      split h
+bindsym $mod+v            split v
 
-# ----- workspaces ------------------------------------------------------------
+# ── workspaces ────────────────────────────────────────────────────────────────
 bindsym $mod+1            workspace $ws1
 bindsym $mod+2            workspace $ws2
 bindsym $mod+3            workspace $ws3
@@ -111,94 +104,73 @@ bindsym $mod+Shift+8      move container to workspace $ws8
 bindsym $mod+Shift+9      move container to workspace $ws9
 bindsym $mod+Shift+0      move container to workspace $ws10
 
-# ----- session ---------------------------------------------------------------
+# ── session ───────────────────────────────────────────────────────────────────
 bindsym $mod+Shift+c      reload
 bindsym $mod+Shift+r      restart
-bindsym $mod+Shift+e      exec --no-startup-id ~/.config/i3/logout-menu.sh
+bindsym $mod+Shift+q      exec --no-startup-id ~/.config/i3/logout-menu.sh
 
-# ----- resize mode -----------------------------------------------------------
+# ── resize mode ───────────────────────────────────────────────────────────────
 mode "resize" {
-    bindsym h resize shrink width 10 px or 10 ppt
-    bindsym j resize grow   height 10 px or 10 ppt
-    bindsym k resize shrink height 10 px or 10 ppt
-    bindsym l resize grow   width 10 px or 10 ppt
-    bindsym Escape mode "default"
-    bindsym Return mode "default"
+    bindsym h               resize shrink width 10 px or 10 ppt
+    bindsym j               resize grow   height 10 px or 10 ppt
+    bindsym k               resize shrink height 10 px or 10 ppt
+    bindsym l               resize grow   width 10 px or 10 ppt
+    bindsym Left             resize shrink width 10 px or 10 ppt
+    bindsym Down             resize grow   height 10 px or 10 ppt
+    bindsym Up               resize shrink height 10 px or 10 ppt
+    bindsym Right            resize grow   width 10 px or 10 ppt
+    bindsym Escape           mode "default"
+    bindsym Return           mode "default"
 }
 bindsym $mod+t mode "resize"
 
-# ----- media keys (laptops) --------------------------------------------------
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5%
-bindsym XF86AudioMute        exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym XF86MonBrightnessUp  exec --no-startup-id brightnessctl set +10%
-bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 10%-
+# ── media keys ────────────────────────────────────────────────────────────────
+bindsym XF86AudioRaiseVolume    exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume    exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute            exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioPlay            exec --no-startup-id playerctl play-pause
+bindsym XF86AudioNext            exec --no-startup-id playerctl next
+bindsym XF86AudioPrev            exec --no-startup-id playerctl previous
+bindsym XF86MonBrightnessUp      exec --no-startup-id brightnessctl set +10%
+bindsym XF86MonBrightnessDown    exec --no-startup-id brightnessctl set 10%-
 
-# ----- autostart -------------------------------------------------------------
+# ── screenshots ───────────────────────────────────────────────────────────────
+bindsym Print                     exec --no-startup-id maim -s | xclip -selection clipboard -t image/png
+bindsym $mod+Print                exec --no-startup-id flameshot gui
+
+# ── autostart ─────────────────────────────────────────────────────────────────
 exec_always --no-startup-id picom --config ~/.config/picom/picom.conf
 exec_always --no-startup-id dunst
 exec        --no-startup-id nm-applet
-exec        --no-startup-id ~/.config/i3/wallpaper.sh
-# archnexus707 services
-exec        --no-startup-id archnexus-automount
-exec        --no-startup-id systemctl --user start archnexus-watch.service 2>/dev/null
+exec        --no-startup-id sh -c '/usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 2>/dev/null || /usr/libexec/polkit-gnome-authentication-agent-1 2>/dev/null || true'
+exec        --no-startup-id feh --bg-fill ~/.config/i3/wallpaper.png 2>/dev/null || true
 
-# archnexus707 keybinds
-# Two help bindings — $mod+slash and $mod+h — both open archnexus-cheatsheet
-# so muscle memory transfers from JaKooLit's Hyprland-Dots convention.
-bindsym $mod+slash        exec --no-startup-id archnexus-cheatsheet
-bindsym $mod+h            exec --no-startup-id archnexus-cheatsheet
-bindsym $mod+x            exec --no-startup-id archnexus-power
-bindsym $mod+w            exec --no-startup-id archnexus-wifi
-bindsym $mod+a            exec --no-startup-id archnexus-audio
-bindsym $mod+Shift+b      exec --no-startup-id archnexus-bt
-bindsym $mod+n            exec --no-startup-id archnexus-notify-history
-bindsym $mod+v            exec --no-startup-id archnexus-clip
-# Screenshots — $mod is the verb. $mod+Print is the primary "take a shot" key.
-bindsym Print             exec --no-startup-id archnexus-shot screen
-bindsym $mod+Print        exec --no-startup-id archnexus-shot region
-bindsym Shift+Print       exec --no-startup-id archnexus-shot region --edit
-bindsym $mod+Shift+Print  exec --no-startup-id archnexus-shot window
-bindsym $mod+Shift+r      exec --no-startup-id archnexus-screenrecord toggle
-bindsym $mod+Shift+s      exec --no-startup-id archnexus-ocr
-
-# media keys
-bindsym XF86MonBrightnessUp     exec --no-startup-id archnexus-brightness up
-bindsym XF86MonBrightnessDown   exec --no-startup-id archnexus-brightness down
-bindsym XF86AudioRaiseVolume    exec --no-startup-id archnexus-volume up
-bindsym XF86AudioLowerVolume    exec --no-startup-id archnexus-volume down
-bindsym XF86AudioMute           exec --no-startup-id archnexus-volume mute
-bindsym XF86AudioPlay           exec --no-startup-id playerctl play-pause
-bindsym XF86AudioNext           exec --no-startup-id playerctl next
-bindsym XF86AudioPrev           exec --no-startup-id playerctl previous
-bindsym $mod+F8                 exec --no-startup-id archnexus-nightlight toggle
-
-# ----- bar (i3status; users who prefer polybar can comment this out) ---------
+# ── bar ───────────────────────────────────────────────────────────────────────
 bar {
     status_command i3status
     position top
-    font pango:JetBrainsMono Nerd Font 10
+    font pango:monospace 12
     tray_output primary
-    separator_symbol "│"
+    separator_symbol ""
     colors {
-        background #1e1e2e
-        statusline #cdd6f4
-        separator  #45475a
-        focused_workspace  #89b4fa #313244 #cdd6f4
-        active_workspace   #45475a #1e1e2e #cdd6f4
-        inactive_workspace #1e1e2e #1e1e2e #6c7086
-        urgent_workspace   #f38ba8 #1e1e2e #cdd6f4
+        background #0d0d11
+        statusline #c0caf5
+        separator  #1a1b26
+        focused_workspace  #7aa2f7 #1a1b26 #c0caf5
+        active_workspace   #1a1b26 #0d0d11 #9aa5ce
+        inactive_workspace #0d0d11 #0d0d11 #565f89
+        urgent_workspace   #f7768e #0d0d11 #c0caf5
     }
 }
 
-# ----- theme include (overwritten by dwm-theme switcher) ---------------------
-# i3 doesn't have native @include but our switcher writes color/border lines
-# directly into this file by replacing the block between THEME-START / THEME-END.
+# ── theme colors ──────────────────────────────────────────────────────────────
+#  cyberpunk: neon cyan accents on deep dark background
+#
 # THEME-START
-client.focused          #89b4fa #313244 #cdd6f4 #b4befe   #89b4fa
-client.focused_inactive #45475a #1e1e2e #cdd6f4 #45475a   #45475a
-client.unfocused        #45475a #1e1e2e #6c7086 #45475a   #45475a
-client.urgent           #f38ba8 #1e1e2e #1e1e2e #f38ba8   #f38ba8
-client.placeholder      #1e1e2e #1e1e2e #cdd6f4 #1e1e2e   #1e1e2e
-client.background       #1e1e2e
+client.focused          #7aa2f7 #1a1b26 #c0caf5 #bb9af7   #7aa2f7
+client.focused_inactive #1a1b26 #0d0d11 #9aa5ce #1a1b26   #1a1b26
+client.unfocused        #1a1b26 #0d0d11 #565f89 #1a1b26   #1a1b26
+client.urgent           #f7768e #0d0d11 #c0caf5 #f7768e   #f7768e
+client.placeholder      #0d0d11 #0d0d11 #c0caf5 #0d0d11   #0d0d11
+client.background       #0d0d11
 # THEME-END

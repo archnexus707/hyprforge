@@ -1,60 +1,117 @@
-// theme.rasi — placeholder default (Catppuccin Mocha). The dwm-theme switcher
-// replaces this with themes/<name>/rofi.rasi.
+/* theme.rasi — cyberpunk rofi colors */
 
 * {
-    bg:        #1e1e2e;
-    bg-alt:    #313244;
-    fg:        #cdd6f4;
-    accent:    #89b4fa;
-    urgent:    #f38ba8;
+    bg0:        #0d0d11;
+    bg1:        #1a1b26;
+    bg2:        #24283b;
+    fg0:        #c0caf5;
+    fg1:        #a9b1d6;
+    fg2:        #565f89;
+    accent:     #7aa2f7;
+    accent2:    #bb9af7;
+    danger:     #f7768e;
+    warning:    #e0af68;
+    success:    #9ece6a;
+    cyan:       #7dcfff;
 
-    background-color: transparent;
-    text-color:       @fg;
-    font:             "JetBrainsMono Nerd Font 11";
+    background-color:               @bg0;
+    text-color:                     @fg0;
+
+    normal-background:              @bg1;
+    normal-foreground:              @fg0;
+    alternate-normal-background:    @bg1;
+    alternate-normal-foreground:    @fg0;
+    selected-normal-background:     @accent;
+    selected-normal-foreground:     @bg0;
+    active-normal-background:       @accent2;
+    active-normal-foreground:       @bg0;
+    urgent-normal-background:       @danger;
+    urgent-normal-foreground:       @bg0;
+
+    alternate-active-background:    @accent2;
+    alternate-active-foreground:    @bg0;
+    alternate-urgent-background:    @danger;
+    alternate-urgent-foreground:    @bg0;
 }
 
 window {
-    width:            42%;
-    border:           2px;
-    border-color:     @accent;
-    border-radius:    12px;
-    background-color: @bg;
-    padding:          12px;
+    background-color:   @bg0;
+    border:             2px;
+    border-color:       @accent;
+    border-radius:      8px;
+    padding:            8px;
+    width:              520px;
+    location:           center;
+    anchor:             center;
+    fullscreen:         false;
+}
+
+mainbox {
+    spacing:            0px;
+    children:           [inputbar, listview];
 }
 
 inputbar {
-    padding:          8px 12px;
-    border-radius:    8px;
-    background-color: @bg-alt;
-    children:         [ prompt, entry ];
+    padding:            8px 12px;
+    spacing:            8px;
+    children:           [prompt, entry];
 }
+
 prompt {
-    text-color:       @accent;
-    padding:          0 8px 0 0;
+    text-color:         @accent;
+    font:               "monospace 13";
 }
+
 entry {
-    placeholder:      "search...";
-    placeholder-color: #6c7086;
+    text-color:         @fg0;
+    font:               "monospace 13";
+    placeholder:        "search...";
+    placeholder-color:  @fg2;
 }
 
 listview {
-    lines:            10;
-    columns:          1;
-    cycle:            true;
-    spacing:          4px;
-    scrollbar:        false;
-    padding:          12px 0 0 0;
+    spacing:            4px;
+    padding:            8px 4px;
+    columns:            1;
+    lines:              12;
+    cycle:              true;
+    dynamic:            true;
+    scrollbar:          false;
 }
 
 element {
-    padding:          6px 10px;
-    border-radius:    8px;
+    padding:            8px 12px;
+    border-radius:      6px;
+    cursor:             pointer;
 }
-element selected {
-    background-color: @accent;
-    text-color:       @bg;
+
+element-text {
+    text-color:         @fg0;
+    font:               "monospace 12";
+    vertical-align:     0.5;
+    horizontal-align:   0.0;
 }
+
 element-icon {
-    size:             24px;
-    padding:          0 8px 0 0;
+    size:               24px;
+    padding:            0px 8px 0px 0px;
+}
+
+element selected {
+    background-color:   @accent;
+}
+
+element selected element-text {
+    text-color:         @bg0;
+}
+
+element alternate {
+    background-color:   @bg0;
+}
+
+scrollbar {
+    handle-width:       4px;
+    handle-color:       @accent;
+    border-radius:      2px;
+    background-color:   @bg1;
 }

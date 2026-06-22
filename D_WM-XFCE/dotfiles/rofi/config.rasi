@@ -1,25 +1,17 @@
-// rofi config — D_WM-XFCE
-// Theme is loaded from ~/.config/rofi/theme.rasi which the dwm-theme switcher
-// symlinks to themes/<name>/rofi.rasi.
+/* config.rasi — D_WM-XFCE rofi launcher */
 
 configuration {
-    modes:                       "drun,run,window,filebrowser";
-    show-icons:                  true;
-    icon-theme:                  "Tela-circle-cyan-dark";
-    drun-display-format:         "{name}";
-    display-drun:                "Apps";
-    display-run:                 "Run";
-    display-window:              "Windows";
-    display-filebrowser:         "Files";
-    window-format:               "{w} · {c} · {t}";
-    sidebar-mode:                false;
-    matching:                    "fuzzy";
-    sort:                        true;
-    sorting-method:              "fzf";
-    case-sensitive:              false;
-    cycle:                       true;
-    scroll-method:               1;
-    terminal:                    "kitty";
+    modi: "drun,window,run";
+    show-icons: true;
+    display-drun: "apps";
+    display-window: "windows";
+    display-run: "run";
+    drun-display-format: "{name}";
+    font: "monospace 14";
+    sort: true;
+    case-sensitive: false;
+    cycle: true;
+    sidebar-mode: false;
 }
 
-@theme "theme"
+@import "theme.rasi"
