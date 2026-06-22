@@ -19,7 +19,8 @@ if [ ! -d "$THEME_DIR/Catppuccin-Mocha-Standard-Mauve-Dark" ]; then
     log "downloading Catppuccin GTK theme"
     tmp=$(mktemp -d)
     curl_err=$(mktemp)
-    curl -fsSL https://github.com/catppuccin/gtk/releases/latest/download/Catppuccin-Mocha-Standard-Mauve-Dark.zip \
+    # Catppuccin renamed assets in v1.0.3 — use explicit version URL
+    curl -fsSL "https://github.com/catppuccin/gtk/releases/download/v1.0.3/catppuccin-mocha-mauve-standard+default.zip" \
         -o "$tmp/catppuccin.zip" 2>"$curl_err" || {
         warn "Catppuccin theme download failed (${curl_err:+\"$(cat "$curl_err")\"}) — using Arc-Dark fallback"
         rm -rf "$tmp" "$curl_err"

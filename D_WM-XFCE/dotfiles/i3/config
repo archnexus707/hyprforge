@@ -1,11 +1,11 @@
-# i3 config — D_WM-XFCE cyberpunk rice
+# i3 config -- D_WM-XFCE cyberpunk rice
 # Clean, standalone i3 session. Works alongside XFCE, not inside it.
 
 set $mod Mod4
 
 font pango:monospace 10
 
-# ── workspace names ────────────────────────────────────────────────────────────
+# -- workspace names ------------------------------------------------------------
 set $ws1  "1:"
 set $ws2  "2:"
 set $ws3  "3:"
@@ -17,7 +17,7 @@ set $ws8  "8:"
 set $ws9  "9:"
 set $ws10 "10:"
 
-# ── gaps & borders ────────────────────────────────────────────────────────────
+# -- gaps & borders ------------------------------------------------------------
 gaps inner 12
 gaps outer 6
 smart_gaps on
@@ -26,7 +26,7 @@ default_border pixel 2
 default_floating_border pixel 2
 hide_edge_borders smart
 
-# ── floating windows ──────────────────────────────────────────────────────────
+# -- floating windows ----------------------------------------------------------
 for_window [class="Pavucontrol"]             floating enable
 for_window [class="Nm-connection-editor"]    floating enable
 for_window [class="Blueman-manager"]         floating enable
@@ -35,12 +35,12 @@ for_window [class="Xfce4-settings-manager"]  floating enable
 for_window [window_role="pop-up"]            floating enable
 for_window [window_role="task_dialog"]       floating enable
 
-# ── assigned workspaces ───────────────────────────────────────────────────────
+# -- assigned workspaces -------------------------------------------------------
 assign [class="firefox"]  $ws2
 assign [class="kitty"]    $ws1
 assign [class="thunar"]   $ws4
 
-# ── app launchers ─────────────────────────────────────────────────────────────
+# -- app launchers -------------------------------------------------------------
 bindsym $mod+Return       exec kitty
 bindsym $mod+r            exec --no-startup-id rofi -show drun
 bindsym $mod+d            exec --no-startup-id rofi -show drun
@@ -49,7 +49,7 @@ bindsym $mod+e            exec thunar
 bindsym $mod+b            exec firefox
 bindsym $mod+l            exec --no-startup-id i3lock -c 000000
 
-# ── window control ────────────────────────────────────────────────────────────
+# -- window control ------------------------------------------------------------
 bindsym $mod+q            kill
 bindsym $mod+f            fullscreen toggle
 bindsym $mod+space        floating toggle
@@ -81,7 +81,7 @@ bindsym $mod+w            layout tabbed
 bindsym $mod+Shift+v      split h
 bindsym $mod+v            split v
 
-# ── workspaces ────────────────────────────────────────────────────────────────
+# -- workspaces ----------------------------------------------------------------
 bindsym $mod+1            workspace $ws1
 bindsym $mod+2            workspace $ws2
 bindsym $mod+3            workspace $ws3
@@ -104,12 +104,12 @@ bindsym $mod+Shift+8      move container to workspace $ws8
 bindsym $mod+Shift+9      move container to workspace $ws9
 bindsym $mod+Shift+0      move container to workspace $ws10
 
-# ── session ───────────────────────────────────────────────────────────────────
+# -- session -------------------------------------------------------------------
 bindsym $mod+Shift+c      reload
 bindsym $mod+Shift+r      restart
 bindsym $mod+Shift+q      exec --no-startup-id ~/.config/i3/logout-menu.sh
 
-# ── resize mode ───────────────────────────────────────────────────────────────
+# -- resize mode ---------------------------------------------------------------
 mode "resize" {
     bindsym h               resize shrink width 10 px or 10 ppt
     bindsym j               resize grow   height 10 px or 10 ppt
@@ -124,7 +124,7 @@ mode "resize" {
 }
 bindsym $mod+t mode "resize"
 
-# ── media keys ────────────────────────────────────────────────────────────────
+# -- media keys ----------------------------------------------------------------
 bindsym XF86AudioRaiseVolume    exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
 bindsym XF86AudioLowerVolume    exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5%
 bindsym XF86AudioMute            exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
@@ -134,18 +134,18 @@ bindsym XF86AudioPrev            exec --no-startup-id playerctl previous
 bindsym XF86MonBrightnessUp      exec --no-startup-id brightnessctl set +10%
 bindsym XF86MonBrightnessDown    exec --no-startup-id brightnessctl set 10%-
 
-# ── screenshots ───────────────────────────────────────────────────────────────
+# -- screenshots ---------------------------------------------------------------
 bindsym Print                     exec --no-startup-id maim -s | xclip -selection clipboard -t image/png
 bindsym $mod+Print                exec --no-startup-id flameshot gui
 
-# ── autostart ─────────────────────────────────────────────────────────────────
+# -- autostart -----------------------------------------------------------------
 exec_always --no-startup-id picom --config ~/.config/picom/picom.conf
 exec_always --no-startup-id dunst
 exec        --no-startup-id nm-applet
-exec        --no-startup-id sh -c '/usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 2>/dev/null || /usr/libexec/polkit-gnome-authentication-agent-1 2>/dev/null || true'
+exec        --no-startup-id sh -c 'for agent in /usr/lib/polkit-1/polkit-agent-helper-1 /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 /usr/libexec/polkit-gnome-authentication-agent-1 /usr/lib/x86_64-linux-gnu/polkit-kde-authentication-agent-1; do [ -x "$agent" ] && exec "$agent"; done; true'
 exec        --no-startup-id feh --bg-fill ~/.config/i3/wallpaper.png 2>/dev/null || true
 
-# ── bar ───────────────────────────────────────────────────────────────────────
+# -- bar -----------------------------------------------------------------------
 bar {
     status_command i3status
     position top
@@ -163,7 +163,7 @@ bar {
     }
 }
 
-# ── theme colors ──────────────────────────────────────────────────────────────
+# -- theme colors --------------------------------------------------------------
 #  cyberpunk: neon cyan accents on deep dark background
 #
 # THEME-START

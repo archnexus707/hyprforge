@@ -32,7 +32,7 @@ sudo apt-get update || die "apt update failed"
 CORE=(
     i3 i3-wm i3status i3lock
     picom rofi dunst feh kitty zsh
-    policykit-1-gnome network-manager-gnome thunar
+    network-manager-gnome thunar
 )
 log "installing core packages (${#CORE[@]} total)"
 sudo apt-get install -y --no-install-recommends "${CORE[@]}" || die "core package install failed"
