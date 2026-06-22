@@ -66,6 +66,10 @@ echo -e "${WARN} On Kali this swaps the active display manager (lightdm -> sddm)
 echo -e "${WARN} If SDDM fails to start, log in on a TTY (Ctrl+Alt+F2) and run:"
 echo -e "${WARN}   sudo systemctl disable sddm; sudo systemctl enable lightdm"
 echo -e "${WARN} ====================================================================="
+if [ ! -t 0 ] || [ "${NON_INTERACTIVE:-0}" = "1" ]; then
+    echo -e "${NOTE} non-interactive mode — skipping DM swap. Set SDDM_SWAP=1 to force."
+    [ "${SDDM_SWAP:-0}" = "1" ] || exit 0
+fi
 read -rp "Proceed with display manager swap? [yes/NO]: " sddm_ans
 if [ "$sddm_ans" != "yes" ]; then
   echo -e "${NOTE} Display manager swap cancelled. Keeping current greeter."
@@ -81,7 +85,7 @@ fi
 disable_failures=0
 disabled_any=0
 for login_manager in "${login[@]}"; do
-  if dpkg -l | grep -q "^ii  $login_manager"; then
+  if dpkg-query -W -f='${Status}' "$login_manager" 2>/dev/null | grep -q "install ok installed"; then
     echo "Disabling $login_manager (package kept installed for rollback)..."
     if sudo systemctl disable "$login_manager.service" >> "$LOG" 2>&1; then
         echo "$login_manager disabled."

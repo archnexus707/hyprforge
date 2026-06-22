@@ -34,9 +34,9 @@ fi
 # doing nothing. We grep first and report; sed failures abort the phase.
 if [ -f "$HOME/.zshrc" ]; then
     pokemon_pat='^#pokemon-colorscripts --no-title -s -r '
-    fastfetch_pat='^fastfetch -c $HOME/.config/fastfetch/config-compact.jsonc'
+    fastfetch_pat='^fastfetch -c \$HOME/.config/fastfetch/config-compact.jsonc'
 
-    if grep -qF "${pokemon_pat#^}" "$HOME/.zshrc" 2>/dev/null; then
+    if grep -qE "${pokemon_pat}" "$HOME/.zshrc" 2>/dev/null; then
         if ! sed -i 's|^#pokemon-colorscripts --no-title -s -r \| fastfetch -c \$HOME/.config/fastfetch/config-pokemon.jsonc --logo-type file-raw --logo-height 10 --logo-width 5 --logo -|pokemon-colorscripts --no-title -s -r \| fastfetch -c \$HOME/.config/fastfetch/config-pokemon.jsonc --logo-type file-raw --logo-height 10 --logo-width 5 --logo -|' "$HOME/.zshrc" >> "$LOG" 2>&1; then
             echo "${ERROR} sed failed to enable pokemon-colorscripts line in ~/.zshrc" | tee -a "$LOG"
             exit 1
@@ -45,7 +45,7 @@ if [ -f "$HOME/.zshrc" ]; then
         echo "${WARN} pokemon-colorscripts marker not found in ~/.zshrc — assets/.zshrc may be out of sync" | tee -a "$LOG"
     fi
 
-    if grep -qF "${fastfetch_pat#^}" "$HOME/.zshrc" 2>/dev/null; then
+    if grep -qE "${fastfetch_pat}" "$HOME/.zshrc" 2>/dev/null; then
         if ! sed -i "s|^fastfetch -c \$HOME/.config/fastfetch/config-compact.jsonc|#fastfetch -c \$HOME/.config/fastfetch/config-compact.jsonc|" "$HOME/.zshrc" >> "$LOG" 2>&1; then
             echo "${ERROR} sed failed to comment fastfetch line in ~/.zshrc" | tee -a "$LOG"
             exit 1

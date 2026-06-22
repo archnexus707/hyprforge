@@ -195,14 +195,18 @@ cd Kali-Hyprland
 | `SUPER+H/J/K/L` | Vim focus |
 | `SUPER+Shift+H/J/K/L` | Vim move |
 | `SUPER+H` or `SUPER+/` | Live keybind cheatsheet |
-| `SUPER+Shift+Q` | Power menu |
+| `SUPER+X` | Power menu (rofi) |
 | `SUPER+A` | Audio sink/source picker |
 | `SUPER+W` | WiFi picker |
-| `SUPER+B` | Bluetooth picker |
-| `SUPER+V` | Volume OSD |
-| `SUPER+X` | Brightness OSD |
-| `Print` | Region screenshot |
-| `SUPER+Print` | Record screen |
+| `SUPER+Shift+B` | Bluetooth picker |
+| `SUPER+V` | Clipboard history |
+| `SUPER+N` | Notification history |
+| `SUPER+F8` | Nightlight toggle |
+| `SUPER+Shift+S` | OCR (region) |
+| `Print` | Full screenshot |
+| `SUPER+Print` | Region screenshot |
+| `SUPER+Shift+Print` | Window screenshot |
+| `SUPER+Shift+R` | Screen record toggle |
 
 ### More details
 

@@ -1,42 +1,63 @@
 
-  D_WM stack — keybinds & notes
+  D_WM stack -- keybinds & notes
   by archnexus707
 
-  Key shortcuts (i3 keybinds — D_WM stack)
+  Key shortcuts (i3 keybinds -- D_WM stack)
 
   ┌──────────────────┬──────────────────────────┐
   │       Key        │          Action          │
   ├──────────────────┼──────────────────────────┤
-  │ SUPER+Enter      │ kitty                    │
+  │ SUPER+Enter      │ kitty terminal           │
   ├──────────────────┼──────────────────────────┤
-  │ SUPER+R          │ rofi launcher            │
+  │ SUPER+R / SUPER+D│ rofi app launcher        │
   ├──────────────────┼──────────────────────────┤
   │ SUPER+Tab        │ rofi window switcher     │
   ├──────────────────┼──────────────────────────┤
-  │ SUPER+E          │ thunar                   │
+  │ SUPER+E          │ thunar file manager      │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+B          │ firefox                  │
   ├──────────────────┼──────────────────────────┤
   │ SUPER+Q          │ close window             │
   ├──────────────────┼──────────────────────────┤
-  │ SUPER+F          │ fullscreen               │
+  │ SUPER+F          │ fullscreen toggle        │
   ├──────────────────┼──────────────────────────┤
-  │ SUPER+1..9       │ switch workspace         │
+  │ SUPER+Space      │ float toggle             │
   ├──────────────────┼──────────────────────────┤
-  │ SUPER+SHIFT+1..9 │ move window to workspace │
+  │ SUPER+S          │ stacking layout          │
   ├──────────────────┼──────────────────────────┤
-  │ SUPER+h/j/k/l    │ focus window             │
+  │ SUPER+W          │ tabbed layout            │
   ├──────────────────┼──────────────────────────┤
-  │ SUPER+SHIFT+E    │ logout/lock/reboot menu  │
+  │ SUPER+V          │ split vertical           │
   ├──────────────────┼──────────────────────────┤
-  │ SUPER+SHIFT+T    │ theme picker             │
+  │ SUPER+Shift+V    │ split horizontal         │
   ├──────────────────┼──────────────────────────┤
-  │ Print            │ flameshot screenshot     │
+  │ SUPER+0..9       │ switch workspace 1-10    │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+Shift+0..9 │ move window to workspace │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+h/j/k/;    │ vim-style focus          │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+Shift+h/j/k│ vim-style move window    │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+Shift+Q    │ logout menu (rofi)       │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+Shift+C    │ reload i3 config         │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+Shift+R    │ restart i3               │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+T          │ resize mode              │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+L          │ lock screen (i3lock)     │
+  ├──────────────────┼──────────────────────────┤
+  │ Print            │ region screenshot ->clip  │
+  ├──────────────────┼──────────────────────────┤
+  │ SUPER+Print      │ flameshot screenshot GUI │
   └──────────────────┴──────────────────────────┘
 
   What's intentionally NOT shipped (add later if you want)
 
-  - No wallpaper image — ~/.config/i3/wallpaper.sh falls back to solid color. Drop a wallpaper.png into ~/.config/i3/ and it'll show.
-  - p10k not pre-configured — first interactive zsh launch will run p10k configure (about 2 min of prompts).
-  - xfce4-panel keeps its default look — adding a custom panel XML or replacing with polybar is a future polish task.
-  - No animated wallpapers — anime loops need xwinwrap + mpv, deferred to a future install script.
+  - p10k not pre-configured -- first interactive zsh launch will run p10k configure (2 min of prompts).
+  - xfce4-panel keeps its default look -- custom panel XML or polybar is future polish.
+  - No animated wallpapers -- anime loops need xwinwrap + mpv, deferred.
 
-  ─ archnexus707 · forged for the rebels of the terminal ─
+  -- archnexus707 . forged for the rebels of the terminal --

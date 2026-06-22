@@ -73,13 +73,13 @@ if [ -d "$Distro_DIR" ]; then
         fi
     fi
     git pull || { echo "${ERROR} git pull failed"; exit 1; }
-    chmod +x install.sh
-    ./install.sh
+    chmod +x Kali-Hyprland/install.sh
+    cd Kali-Hyprland && ./install.sh
 else
     echo "${MAGENTA}$Distro_DIR does not exist. Cloning the repository...${RESET}"
     git clone --depth=1 "$Github_URL" "$Distro_DIR" \
         || { echo "${ERROR} git clone failed"; exit 1; }
     cd "$Distro_DIR" || { echo "${ERROR} cannot cd into $Distro_DIR"; exit 1; }
-    chmod +x install.sh
-    ./install.sh
+    chmod +x Kali-Hyprland/install.sh
+    cd Kali-Hyprland && ./install.sh
 fi
