@@ -73,9 +73,15 @@ for pkg in pulseaudio-utils playerctl brightnessctl; do
 done
 
 header "System Utils"
-for pkg in policykit-1-gnome network-manager-gnome thunar; do
+for pkg in network-manager-gnome thunar; do
     pkg_installed "$pkg" && pass "$pkg" || fail "$pkg — missing"
 done
+# polkit agent: try common paths
+polkit_found=0
+for a in /usr/lib/polkit-1/polkit-agent-helper-1 /usr/libexec/polkit-kde-authentication-agent-1 /usr/libexec/polkit-mate-authentication-agent-1; do
+    [ -x "$a" ] && polkit_found=1 && break
+done
+[ "$polkit_found" -eq 1 ] && pass "polkit agent" || warn "no polkit agent found"
 
 # ── i3 session ─────────────────────────────────────────────────────────────────
 header "i3 Session Entry"

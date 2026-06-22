@@ -19,8 +19,8 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 ## Key workflows & commands
 ### Fresh install / rebuild
 ```bash
-git clone --depth=1 -b development https://github.com/JaKooLit/Debian-Hyprland.git ~/Debian-Hyprland
-cd ~/Debian-Hyprland
+git clone --depth=1 https://github.com/archnexus707/hyprforge.git ~/hyprforge
+cd ~/hyprforge/Kali-Hyprland
 chmod +x install.sh
 ./install.sh                        # interactive whiptail flow
 ./install.sh --tty --preset preset.sh  # non-interactive preset run
