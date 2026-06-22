@@ -6,16 +6,28 @@ set -uo pipefail
 
 RESET='\033[0m'
 BOLD='\033[1m'
+DIM='\033[2m'
 GREEN='\033[38;5;46m'
 RED='\033[38;5;196m'
 YELLOW='\033[38;5;226m'
 CYAN='\033[38;5;51m'
+NEON='\033[38;5;123m'
+PINK='\033[38;5;198m'
 
 ok()  { echo -e "  ${GREEN}[OK]${RESET} $*"; }
 log() { echo -e "  ${YELLOW}[..]${RESET} $*"; }
 die() { echo -e "  ${RED}[FATAL]${RESET} $*"; exit 1; }
 
-echo -e "${CYAN}${BOLD}D_WM-XFCE Setup Bootstrapper${RESET}"
+echo -e "${CYAN}${BOLD}"
+echo "     ██████╗     ██╗    ██╗███╗   ███╗"
+echo "     ██╔══██╗    ██║    ██║████╗ ████║"
+echo "     ██║  ██║    ██║ █╗ ██║██╔████╔██║"
+echo "     ██║  ██║    ██║███╗██║██║╚██╔╝██║"
+echo "     ██████╔╝    ╚███╔███╔╝██║ ╚═╝ ██║"
+echo "     ╚═════╝      ╚══╝╚══╝ ╚═╝     ╚═╝"
+echo -e "${RESET}"
+echo -e "  ${NEON}${BOLD}◆${RESET} ${CYAN}${BOLD}D_WM-XFCE Setup${RESET}  ${DIM}quick dependency bootstrapper${RESET}"
+echo -e "  ${NEON}${BOLD}◆${RESET} ${DIM}forged by${RESET} ${PINK}archnexus707${RESET} ${DIM}// hyprforge${RESET}"
 echo
 
 [ "$(id -u)" -eq 0 ] && die "do not run as root"
