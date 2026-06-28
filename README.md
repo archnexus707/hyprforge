@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/banner.jpg" alt="hyprforge — neon cyberpunk Kali rice" width="100%"/>
+
 ```
  █████╗ ██████╗  ██████╗██╗  ██╗███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
 ██╔══██╗██╔══██╗██╔════╝██║  ██║████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
@@ -27,6 +29,8 @@
 ![Distro](https://img.shields.io/badge/distro-Kali_rolling-00ff9c?style=for-the-badge&labelColor=0a0a0a&logo=kalilinux&logoColor=00ff9c)
 ![Compositor](https://img.shields.io/badge/wayland-Hyprland-00ff9c?style=for-the-badge&labelColor=0a0a0a)
 ![Fallback](https://img.shields.io/badge/x11-i3wm_%2B_picom-00ff9c?style=for-the-badge&labelColor=0a0a0a)
+![Wallpapers](https://img.shields.io/badge/wallpapers-194_anime_%2B_cyberpunk-00ff9c?style=for-the-badge&labelColor=0a0a0a)
+![Greeter](https://img.shields.io/badge/greeter-pokémon_%2B_fastfetch-00ff9c?style=for-the-badge&labelColor=0a0a0a)
 
 <br/>
 
@@ -282,6 +286,31 @@ cd ../Kali-Hyprland && ./doctor.sh
 ```
 
 </details>
+
+---
+
+## ◆ Gallery
+
+<div align="center">
+
+<table>
+<tr>
+<td align="center" width="50%">
+<img src="assets/showcase-hyprland.jpg" alt="Kali-Hyprland" width="100%"/><br/>
+<b>▸ Kali-Hyprland</b><br/>
+<sub>Wayland · Hyprland · blur · hyprlock</sub>
+</td>
+<td align="center" width="50%">
+<img src="assets/showcase-xfce.jpg" alt="D_WM-XFCE" width="100%"/><br/>
+<b>▸ D_WM-XFCE</b><br/>
+<sub>X11 · i3wm · picom · VM-safe</sub>
+</td>
+</tr>
+</table>
+
+<sub>Both stacks ship a <b>194-wallpaper anime + cyberpunk pack</b> (downloaded on install) and a random-Pokémon fastfetch greeter on every terminal.</sub>
+
+</div>
 
 ---
 
