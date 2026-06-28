@@ -30,6 +30,8 @@ backup_and_copy "$DOTFILES/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
 backup_and_copy "$DOTFILES/rofi/config.rasi" "$HOME/.config/rofi/config.rasi"
 backup_and_copy "$DOTFILES/rofi/theme.rasi"  "$HOME/.config/rofi/theme.rasi"
 backup_and_copy "$DOTFILES/dunst/dunstrc"    "$HOME/.config/dunst/dunstrc"
+# fastfetch pokemon greeter config (used by the .zshrc terminal-launch greeter)
+backup_and_copy "$DOTFILES/fastfetch/config-pokemon.jsonc" "$HOME/.config/fastfetch/config-pokemon.jsonc"
 
 # home dotfiles
 if [ -d "$DOTFILES/home" ]; then

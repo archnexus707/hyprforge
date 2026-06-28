@@ -44,4 +44,23 @@ done
 # picom config dir
 mkdir -p "$HOME/.config/picom"
 
+# pokemon-colorscripts — powers the fastfetch terminal greeter. Not in apt, so
+# install from upstream (needs python3 + git). Idempotent: skip if present.
+if command -v pokemon-colorscripts >/dev/null 2>&1; then
+    log "already installed: pokemon-colorscripts"
+elif command -v git >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1; then
+    log "installing pokemon-colorscripts (terminal greeter)"
+    _pcs_dir="$(mktemp -d)"
+    if git clone --depth=1 https://gitlab.com/phoneybadger/pokemon-colorscripts.git "$_pcs_dir" >/dev/null 2>&1; then
+        ( cd "$_pcs_dir" && sudo ./install.sh ) >/dev/null 2>&1 \
+            && ok "pokemon-colorscripts installed" \
+            || warn "pokemon-colorscripts install failed (greeter falls back to plain fastfetch)"
+    else
+        warn "pokemon-colorscripts clone failed (greeter falls back to plain fastfetch)"
+    fi
+    rm -rf "$_pcs_dir"
+else
+    warn "git/python3 missing — skipping pokemon-colorscripts (greeter falls back to plain fastfetch)"
+fi
+
 ok "dependencies complete"

@@ -30,9 +30,16 @@ alias grep='grep --color=auto'
 alias df='df -h'
 alias free='free -h'
 
-# ── fastfetch on terminal launch ──────────────────────────────────────────────
-if command -v fastfetch >/dev/null 2>&1; then
-    fastfetch
+# ── pokemon + fastfetch greeter on terminal launch ────────────────────────────
+# Random pokemon as the fastfetch logo (the archnexus707 signature greeter).
+# Falls back to plain fastfetch if pokemon-colorscripts isn't installed.
+if [[ $- == *i* ]] && command -v fastfetch >/dev/null 2>&1; then
+    if command -v pokemon-colorscripts >/dev/null 2>&1; then
+        pokemon-colorscripts --no-title -s -r | fastfetch -c "$HOME/.config/fastfetch/config-pokemon.jsonc" \
+            --logo-type file-raw --logo-height 10 --logo-width 5 --logo - 2>/dev/null
+    else
+        fastfetch
+    fi
 fi
 
 export EDITOR=nano

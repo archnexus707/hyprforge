@@ -773,8 +773,8 @@ options_command+=(
     "thunar" "Do you want Thunar file manager to be installed?" "OFF"
     "ags" "Install AGS v1 for Desktop-Like Overview" "OFF"
     "quickshell" "Install Quickshell (QtQuick-based shell toolkit)?" "OFF"
-    "zsh" "Install zsh shell with Oh-My-Zsh?" "OFF"
-    "pokemon" "Add Pokemon color scripts to your terminal?" "OFF"
+    "zsh" "Install zsh shell with Oh-My-Zsh? (powers the pokemon greeter)" "ON"
+    "pokemon" "Add Pokemon color scripts to your terminal? (greeter)" "ON"
     "rog" "Are you installing on Asus ROG laptops?" "OFF"
     "dots" "Download and install pre-configured Hyprland dotfiles?" "OFF"
 )
