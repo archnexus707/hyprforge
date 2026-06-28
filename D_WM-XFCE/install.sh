@@ -113,6 +113,7 @@ fi
 : "${terminal="ON"}"
 : "${theme="ON"}"
 : "${dotfiles="ON"}"
+: "${wallpapers="ON"}"
 
 SCRIPTS="$SCRIPT_DIR/install-scripts"
 
@@ -122,6 +123,7 @@ run_phase "picom"          "$SCRIPTS/02-picom.sh"     "$picom"        || warn "p
 run_phase "terminal+zsh"   "$SCRIPTS/03-terminal.sh"  "$terminal"     || warn "terminal phase had issues"
 run_phase "cyberpunk-theme" "$SCRIPTS/04-theme.sh"    "$theme"        || warn "theme phase had issues"
 run_phase "dotfiles"       "$SCRIPTS/05-dotfiles.sh"  "$dotfiles"     || warn "dotfile phase had issues"
+run_phase "wallpapers"     "$SCRIPTS/06-wallpapers.sh" "$wallpapers"  || warn "wallpaper phase had issues"
 
 echo
 echo -e "${GREEN}============================================${RESET}"

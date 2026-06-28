@@ -1,6 +1,6 @@
 # Debian-Hyprland Install & Upgrade Guide
 
-This guide covers the enhanced installation and upgrade workflows for KooL's Debian-Hyprland project, including new automation features, centralized version management, and dry-run capabilities.
+This guide covers the enhanced installation and upgrade workflows for archnexus707's Debian-Hyprland project, including new automation features, centralized version management, and dry-run capabilities.
 
 ## Table of Contents
 

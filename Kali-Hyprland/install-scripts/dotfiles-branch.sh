@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # Hyprland-Dots to download from main #
 
 #specific branch or release
@@ -22,7 +22,7 @@ if ! source "$(dirname "$(readlink -f "$0")")/Global_functions.sh"; then
 fi
 
 # Check if Hyprland-Dots exists
-printf "${NOTE} Cloning and Installing ${SKY_BLUE}KooL's Hyprland Dots for Debian${RESET}....\n"
+printf "${NOTE} Cloning and Installing ${SKY_BLUE}archnexus707's Hyprland Dots for Debian${RESET}....\n"
 
 # Check if Hyprland-Dots exists (under build/src)
 SRC_DIR="$SRC_ROOT/Hyprland-Dots-Debian"
@@ -37,7 +37,7 @@ else
         chmod +x copy.sh
         ./copy.sh
     else
-        echo -e "$ERROR Can't download ${YELLOW}KooL's Hyprland-Dots-Debian${RESET}"
+        echo -e "$ERROR Can't download ${YELLOW}archnexus707's Hyprland-Dots-Debian${RESET}"
     fi
 fi
 

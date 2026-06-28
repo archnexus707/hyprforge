@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # Hyprland-Dots to download a specific release #
 
 # Define the specific release version to download
@@ -43,21 +43,21 @@ if curl -L "$tarball_url" -o "Hyprland-Dots-${specific_version}.tar.gz"; then
     tar -xzf "Hyprland-Dots-${specific_version}.tar.gz" || exit 1
 
     # Delete existing Hyprland-Dots
-    rm -rf JaKooLit-Hyprland-Dots
+    rm -rf archnexus707-Hyprland-Dots
 
     # Identify the extracted directory
     extracted_directory=$(tar -tf "Hyprland-Dots-${specific_version}.tar.gz" | grep -o '^[^/]\+' | uniq)
 
-    # Rename the extracted directory to JaKooLit-Hyprland-Dots
-    mv "$extracted_directory" JaKooLit-Hyprland-Dots || exit 1
+    # Rename the extracted directory to archnexus707-Hyprland-Dots
+    mv "$extracted_directory" archnexus707-Hyprland-Dots || exit 1
 
-    cd "JaKooLit-Hyprland-Dots" || exit 1
+    cd "archnexus707-Hyprland-Dots" || exit 1
 
     # Set execute permission for copy.sh and execute it
     chmod +x copy.sh
     ./copy.sh
 
-    echo -e "${OK} Hyprland-Dots-${specific_version} release downloaded, extracted, and processed successfully. Check JaKooLit-Hyprland-Dots directory for more detailed install logs" 2>&1 | tee -a "../Install-Logs/install-$(date +'%d-%H%M%S')_dotfiles.log"
+    echo -e "${OK} Hyprland-Dots-${specific_version} release downloaded, extracted, and processed successfully. Check archnexus707-Hyprland-Dots directory for more detailed install logs" 2>&1 | tee -a "../Install-Logs/install-$(date +'%d-%H%M%S')_dotfiles.log"
 else
     echo -e "${ERROR} Failed to download Hyprland-Dots-${specific_version} release." 2>&1 | tee -a "../Install-Logs/install-$(date +'%d-%H%M%S')_dotfiles.log"
     exit 1

@@ -81,7 +81,7 @@ else
 fi
 
 # ----- write Hyprland VMware drop-in -----------------------------------------
-# JaKooLit's Hyprland dotfiles include a UserConfigs/ subtree intended exactly
+# archnexus707's Hyprland dotfiles include a UserConfigs/ subtree intended exactly
 # for this kind of host-specific override. We drop a file there that the main
 # config can `source =` so changes survive dotfile updates.
 

@@ -75,7 +75,7 @@ diff -u ~/Desktop/Debian-Hyprland/install-scripts/  ./install-scripts/ | less
 
 ## Special thanks
 
-Special thanks from **archnexus707** to [JaKooLit](https://github.com/JaKooLit) — his Debian-Hyprland project provided the early foundation that this Kali-targeted build was inspired by. The decisions documented above are the Kali-Hyprland engineering layer on top.
+Engineered by **archnexus707**. The decisions documented above are the Kali-Hyprland engineering layer.
 
 ## License
 

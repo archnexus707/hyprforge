@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # Nvidia - Check Readme for more details for the drivers #
 # UBUNTU USERS, FOLLOW README!
 

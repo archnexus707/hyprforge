@@ -3,7 +3,7 @@
 # archnexus-keybinds.sh — wire the archnexus-* helper suite into the live
 # Hyprland session, and arm the welcome auto-launch on first zsh login.
 #
-# Idempotent — safe to re-run. Honors a freshly-deployed JaKooLit dotfiles
+# Idempotent — safe to re-run. Honors a freshly-deployed archnexus707 dotfiles
 # tree without clobbering UserKeybinds.conf.
 #
 # What it does:
@@ -12,7 +12,7 @@
 #      brightness/volume/nightlight/notify-history/screenrecord.
 #   2. Sources that file from ~/.config/hypr/UserConfigs/UserSettings.conf.
 #      Because Hyprland uses "last bind wins" semantics, sourcing AFTER any
-#      JaKooLit defaults guarantees ours take precedence on collisions.
+#      archnexus707 defaults guarantees ours take precedence on collisions.
 #   3. Appends an auto-launch snippet to ~/.zshrc so archnexus-welcome runs
 #      once on first interactive shell, gated by a sentinel file the
 #      welcome script manages itself.
@@ -49,10 +49,10 @@ cat > "$KEYBINDS_FILE" <<'HYPR_EOF'
 # IMPORTANT: Hyprland does NOT do "last bind wins" — duplicate bind= entries
 # for the same key STACK, and ALL matching dispatchers fire on the keypress.
 # So we explicitly `unbind` each key first. Because this file is sourced AFTER
-# JaKooLit's UserKeybinds.conf, these unbinds remove their prior binds; the
+# archnexus707's UserKeybinds.conf, these unbinds remove their prior binds; the
 # bind= lines below then install the archnexus helper as the sole handler.
 
-# ----- clear any colliding JaKooLit defaults before rebinding ---------------
+# ----- clear any colliding archnexus707 defaults before rebinding ---------------
 unbind = SUPER,        slash
 unbind = SUPER,        H
 unbind = SUPER,        X
@@ -79,7 +79,7 @@ unbind = ,             XF86AudioPrev
 
 # ----- archnexus pickers ---------------------------------------------------
 # Two help bindings — SUPER+slash and SUPER+H — both open archnexus-cheatsheet
-# so muscle memory transfers from JaKooLit's Hyprland-Dots convention.
+# so muscle memory transfers from archnexus707's Hyprland-Dots convention.
 bind = SUPER,        slash,  exec, archnexus-cheatsheet
 bind = SUPER,        H,      exec, archnexus-cheatsheet
 bind = SUPER,        X,      exec, archnexus-power
@@ -91,7 +91,7 @@ bind = SUPER,        V,      exec, archnexus-clip
 bind = SUPER SHIFT,  S,      exec, archnexus-ocr
 
 # ----- screenshots / screen-recording --------------------------------------
-# JaKooLit-style convention: SUPER is the modifier verb.
+# archnexus707-style convention: SUPER is the modifier verb.
 #   Print              full screen
 #   SUPER + Print      region (most common — primary screenshot key)
 #   SHIFT + Print      region, then open swappy/pinta for annotation
@@ -124,7 +124,7 @@ if [ -f "$SETTINGS_FILE" ]; then
         {
             echo ""
             echo "# Added by archnexus-keybinds.sh — sourced AFTER UserKeybinds.conf"
-            echo "# so its leading unbind= lines clear JaKooLit defaults before rebinding."
+            echo "# so its leading unbind= lines clear archnexus707 defaults before rebinding."
             echo "source = ~/.config/hypr/UserConfigs/archnexus-keybinds.conf"
         } >> "$SETTINGS_FILE"
         echo -e "${OK} Wired archnexus-keybinds.conf into $SETTINGS_FILE"

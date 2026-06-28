@@ -295,7 +295,7 @@ If hyprforge made your desktop glow:
 
 ## ◆ Special thanks
 
-**[JaKooLit](https://github.com/JaKooLit)** — his Debian-Hyprland project inspired the Kali-Hyprland fork.
+**archnexus707** — forged the Kali-Hyprland stack.
 
 Hyprland: [hyprwm](https://github.com/hyprwm). Themes: [Tokyo Night](https://github.com/folke/tokyonight.nvim), [Catppuccin](https://github.com/catppuccin).
 

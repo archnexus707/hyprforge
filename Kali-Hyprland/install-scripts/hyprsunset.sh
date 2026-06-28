@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # hyprsunset #
 
 #specific branch or release (fallback)

@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # Rofi upstream (2.0.0, x11+wayland)
 
 # Minimal, targeted build deps (others are pulled by 00-dependencies.sh already)

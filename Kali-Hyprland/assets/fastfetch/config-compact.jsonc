@@ -29,6 +29,12 @@
             "keyColor": "yellow"
         },
         {
+            "type": "command",
+            "key": " ",
+            "keyColor": "blue",
+            "text": "echo archnexus707"
+        },
+        {
             "type": "wm",
             "key": " ",
             "keyColor": "blue"

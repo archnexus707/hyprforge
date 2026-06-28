@@ -1,6 +1,6 @@
 #!/bin/bash
 # Kali-Hyprland auto-installer — by archnexus707
-# Special thanks: JaKooLit — early foundation this build was inspired by.
+# Special thanks: archnexus707 — early foundation this build was inspired by.
 
 # Set some colors for output messages
 OK="$(tput setaf 2)[OK]$(tput sgr0)"

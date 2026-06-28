@@ -26,10 +26,47 @@ LOFI_REPO="${WALLPAPER_LOFI_REPO:-https://github.com/D3Ext/aesthetic-wallpapers.
 ANIME_REPO="${WALLPAPER_ANIME_REPO:-https://github.com/dharmx/walls.git}"
 WALL_DIR="${WALLPAPER_DIR:-$HOME/Pictures/Wallpapers}"
 
-archnexus_phase "wallpaper-pack" "OPTIONAL — lofi + anime wallpapers"
+archnexus_phase "wallpaper-pack" "archnexus707 anime/cyberpunk pack + optional extras"
 
+# ---------------------------------------------------------------------------
+# archnexus707 wallpaper pack — shipped as a GitHub Release asset (~1 GB, not
+# committed to the repo). Downloaded by DEFAULT into ~/Pictures/wallpapers
+# (skip with ARCHNEXUS_SKIP_WALLPAPERS=1; force redownload with WALLPAPER_FORCE=1).
+# ---------------------------------------------------------------------------
+ARCHNEXUS_WALL_URL="${WALLPAPER_URL:-https://github.com/archnexus707/hyprforge/releases/download/wallpapers-v1/hyprforge-wallpapers.tar}"
+ARCHNEXUS_WALL_DIR="${ARCHNEXUS_WALLPAPER_DIR:-$HOME/Pictures/wallpapers}"
+
+_archnexus_fetch() {
+    local url="$1" out="$2"
+    if command -v curl >/dev/null 2>&1; then curl -fL --retry 3 -o "$out" "$url"
+    elif command -v wget >/dev/null 2>&1; then wget -O "$out" "$url"
+    else echo "[WARN] no curl/wget — cannot download archnexus pack."; return 1; fi
+}
+
+if [ "${ARCHNEXUS_SKIP_WALLPAPERS:-0}" = "1" ]; then
+    echo "[INFO] ARCHNEXUS_SKIP_WALLPAPERS=1 — skipping archnexus wallpaper pack."
+else
+    mkdir -p "$ARCHNEXUS_WALL_DIR"
+    _existing=$(find "$ARCHNEXUS_WALL_DIR" -maxdepth 1 -type f 2>/dev/null | wc -l)
+    if [ "$_existing" -ge 50 ] && [ "${WALLPAPER_FORCE:-0}" != "1" ]; then
+        echo "[OK] archnexus wallpaper pack already present ($_existing files) — skipping."
+    else
+        _tmp="$(mktemp -d)"; _tar="$_tmp/wallpapers.tar"
+        echo "[INFO] downloading archnexus wallpaper pack (~1 GB)…"
+        if _archnexus_fetch "$ARCHNEXUS_WALL_URL" "$_tar" && tar -xf "$_tar" -C "$ARCHNEXUS_WALL_DIR" 2>/dev/null; then
+            echo "[OK] $(find "$ARCHNEXUS_WALL_DIR" -maxdepth 1 -type f | wc -l) wallpapers in $ARCHNEXUS_WALL_DIR"
+        else
+            echo "[WARN] archnexus pack download/extract failed — re-run ./install-scripts/wallpaper-pack.sh later."
+        fi
+        rm -rf "$_tmp"
+    fi
+fi
+
+# ---------------------------------------------------------------------------
+# Optional EXTRA community packs (lofi + anime from external repos). Prompted.
+# ---------------------------------------------------------------------------
 if [ "${NON_INTERACTIVE:-0}" = "1" ]; then
-    echo "[INFO] NON_INTERACTIVE=1; skipping wallpaper pack."
+    echo "[INFO] NON_INTERACTIVE=1; skipping optional extra community packs."
     exit 0
 fi
 

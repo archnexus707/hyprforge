@@ -1,7 +1,6 @@
 #!/bin/bash
 # Kali-Hyprland installer — by archnexus707
-# Special thanks: JaKooLit (https://github.com/JaKooLit) — early foundation
-# this Kali-targeted build was inspired by.
+# Builds Hyprland + companions from source on Kali rolling.
 # archnexus707 polish: banner + sudo prime + wallpaper-pack hook.
 
 

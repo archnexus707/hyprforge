@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # SWWW - Wallpaper Utility #
 
 # specific branch or release (minimum required 0.11.2)

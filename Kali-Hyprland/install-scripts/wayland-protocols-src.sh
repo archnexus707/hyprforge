@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # Build and install wayland-protocols from source
 # Provides a newer wayland-protocols.pc for pkg-config when distro version is too old
 

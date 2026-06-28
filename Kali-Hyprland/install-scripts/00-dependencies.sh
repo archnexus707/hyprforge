@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # main dependencies #
 # 22 Aug 2024 - NOTE will trim this more down
 

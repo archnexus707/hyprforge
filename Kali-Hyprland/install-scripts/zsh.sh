@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # Zsh and Oh my Zsh + Optional Pokemon ColorScripts#
 
 zsh=(
@@ -65,9 +65,9 @@ if command -v zsh >/dev/null; then
   # Check if ~/.zshrc and .zprofile exists, create a backup, and copy the new
   # configuration. Skip the overwrite if our marker is already present so
   # repeated installs don't clobber the user's edits to .zshrc.
-  KOOL_MARKER="# KooL-Hyprland-zsh-marker"
+  KOOL_MARKER="# archnexus707-Hyprland-zsh-marker"
   if [ -f "$HOME/.zshrc" ] && grep -qF "$KOOL_MARKER" "$HOME/.zshrc" 2>/dev/null; then
-      echo "${INFO} ~/.zshrc already contains KooL marker — leaving as-is (set ZSH_FORCE_OVERWRITE=1 to overwrite)" | tee -a "$LOG"
+      echo "${INFO} ~/.zshrc already contains archnexus707 marker — leaving as-is (set ZSH_FORCE_OVERWRITE=1 to overwrite)" | tee -a "$LOG"
       if [ "${ZSH_FORCE_OVERWRITE:-0}" = "1" ]; then
           ts="$(date -u +%Y%m%dT%H%M%SZ)"
           cp -a "$HOME/.zshrc" "$HOME/.zshrc-backup-$ts" || true

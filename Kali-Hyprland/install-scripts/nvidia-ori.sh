@@ -16,7 +16,7 @@ if [ "${ARCHNEXUS_ALLOW_NVIDIA_ORI:-0}" != "1" ]; then
     exit 1
 fi
 
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # Nvidia - Check Readme for more details for the drivers #
 # UBUNTU USERS, FOLLOW README!
 

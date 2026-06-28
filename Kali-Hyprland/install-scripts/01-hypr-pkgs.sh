@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # Hyprland-Dots Packages #
 # edit your packages desired here.
 # WARNING! If you remove packages here, dotfiles may not work properly.
@@ -97,7 +97,7 @@ LOG="Install-Logs/install-$(date +%d-%H%M%S)_hypr-pkgs.log"
 
 # conflicting packages removal
 overall_failed=0
-printf "\n%s - ${SKY_BLUE}Removing some packages${RESET} as it conflicts with KooL's Hyprland Dots \n" "${NOTE}"
+printf "\n%s - ${SKY_BLUE}Removing some packages${RESET} as it conflicts with archnexus707's Hyprland Dots \n" "${NOTE}"
 for PKG in "${uninstall[@]}"; do
     uninstall_package "$PKG" 2>&1 | tee -a "$LOG"
     if [ $? -ne 0 ]; then
@@ -112,7 +112,7 @@ fi
 printf "\n%.0s" {1..1}
 
 # Installation of main components
-printf "\n%s - Installing ${SKY_BLUE}KooL's hyprland necessary packages${RESET} .... \n" "${NOTE}"
+printf "\n%s - Installing ${SKY_BLUE}archnexus707's hyprland necessary packages${RESET} .... \n" "${NOTE}"
 
 for PKG1 in "${hypr_package[@]}" "${hypr_package_2[@]}" "${Extra[@]}"; do
     install_package "$PKG1" "$LOG"

@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # Global Functions for Scripts #
 
 # pipefail is required so `install_package "$X" | tee -a "$LOG"` actually

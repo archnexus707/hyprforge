@@ -152,7 +152,7 @@ Kali-Hyprland/
 
 ## Special thanks
 
-Special thanks from **archnexus707** to [JaKooLit](https://github.com/JaKooLit) — his Debian-Hyprland project laid the early foundation that this Kali-targeted build was inspired by. The Hyprland community wouldn't be what it is without his work.
+Built and maintained by **archnexus707**. Powered by [Hyprland](https://github.com/hyprwm/Hyprland) and the wider Hyprland community.
 
 Shoutouts also to [Hypr Development](https://github.com/hyprwm) for Hyprland itself, and to the palette authors behind [Tokyo Night](https://github.com/folke/tokyonight.nvim), [Catppuccin](https://github.com/catppuccin/catppuccin), and Cyberpunk: Edgerunners.
 

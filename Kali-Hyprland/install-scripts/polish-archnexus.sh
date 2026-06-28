@@ -30,6 +30,24 @@ mkdir -p "$(dirname "$LOG")"
 
 echo -e "${INFO} ===== archnexus polish (palette + wlogout) ====="
 
+# ----- fastfetch rebrand -----------------------------------------------------
+# The Hyprland-Dots deploy their own fastfetch configs that print
+# "JaKooLit Version: ${DOTS_VERSION}" in the terminal greeter. Rebrand the
+# deployed copies to archnexus707 (idempotent; safe if the files are absent).
+FF_DIR="$HOME/.config/fastfetch"
+if [ -d "$FF_DIR" ]; then
+    for _ff in "$FF_DIR"/*.jsonc; do
+        [ -f "$_ff" ] || continue
+        sed -i \
+            -e 's/JaKooLit Version: \${DOTS_VERSION}/archnexus707/g' \
+            -e 's/Jakoolit: v\${DOTS_VERSION}/archnexus707/g' \
+            -e 's/JaKooLit/archnexus707/g' \
+            -e 's/Jakoolit/archnexus707/g' \
+            "$_ff" 2>/dev/null || true
+    done
+    echo -e "${OK} Rebranded fastfetch greeter configs to archnexus707"
+fi
+
 # ----- packages --------------------------------------------------------------
 for PKG in "${polish_pkgs[@]}"; do
   install_package "$PKG" "$LOG"

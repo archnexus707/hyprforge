@@ -1,6 +1,6 @@
 # Guía de Instalación y Actualización de Debian-Hyprland
 
-Esta guía cubre los flujos de instalación y actualización mejorados para el proyecto Debian-Hyprland de KooL, incluyendo nuevas funciones de automatización, gestión centralizada de versiones y capacidades de dry-run.
+Esta guía cubre los flujos de instalación y actualización mejorados para el proyecto Debian-Hyprland de archnexus707, incluyendo nuevas funciones de automatización, gestión centralizada de versiones y capacidades de dry-run.
 
 ## Tabla de Contenidos
 

@@ -248,7 +248,7 @@
 ## 11 March 2025
 
 - Added uninstall script
-- forked AGS v1 into JakooLit repo. This is just incase Aylur decide to take down v1
+- forked AGS v1 into archnexus707 repo. This is just incase Aylur decide to take down v1
 
 ## 10 March 2025
 
@@ -296,7 +296,7 @@
 
 ## 01 Jan 2025
 
-- Switched to download dots from KooL's Hyprland dots specific branch
+- Switched to download dots from archnexus707's Hyprland dots specific branch
 
 ## 26 Dec 2024
 

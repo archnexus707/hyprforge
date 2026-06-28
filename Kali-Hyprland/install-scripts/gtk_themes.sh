@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/JaKooLit 💫 #
+# 💫 https://github.com/archnexus707 💫 #
 # GTK Themes & ICONS and  Sourcing from a different Repo #
 
 # Base utilities needed regardless of Debian branch
