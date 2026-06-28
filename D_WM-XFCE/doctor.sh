@@ -143,7 +143,7 @@ done
 header "GTK Theme & Cursor"
 
 THEME_DIR="$HOME/.themes"
-CAT_THEME="$THEME_DIR/Catppuccin-Mocha-Standard-Mauve-Dark"
+CAT_THEME="$THEME_DIR/catppuccin-mocha-mauve-standard+default"
 [ -d "$CAT_THEME" ] && pass "Catppuccin GTK theme" || warn "Catppuccin theme missing — run 04-theme.sh"
 
 [ -f "$HOME/.icons/Bibata-Modern-Ice/index.theme" ] 2>/dev/null && pass "Bibata cursor" || warn "Bibata cursor missing"

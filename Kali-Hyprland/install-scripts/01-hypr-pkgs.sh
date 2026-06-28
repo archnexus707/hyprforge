@@ -27,7 +27,7 @@ hypr_package=(
     python3-pip
     qt5ct
     qt5-style-kvantum
-    qt-style-kvantum-themes
+    qt5-style-kvantum-themes
     qt6ct
     slurp
     swappy

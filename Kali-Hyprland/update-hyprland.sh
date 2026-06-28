@@ -38,11 +38,11 @@ DEFAULT_MODULES=(
     xkbcommon
     hyprutils
     hyprlang
-    hyprtoolkit
-    wayland-protocols-src
-    aquamarine
-    hyprgraphics
     hyprwayland-scanner
+    wayland-protocols-src
+    hyprgraphics
+    aquamarine
+    hyprtoolkit
     hyprland-protocols
     hyprland-qt-support
     hyprland-guiutils

@@ -45,7 +45,9 @@ printf "%s ===== environment =====\n" "$INFO"
 
 # ----- critical binaries ---------------------------------------------------
 printf "\n%s ===== critical binaries =====\n" "$INFO"
-for bin in Hyprland hyprctl hyprland hyprlock hypridle hyprpaper kitty rofi dunst; do
+# NOTE: this build uses swww (wallpaper) + sway-notification-center (swaync),
+# NOT hyprpaper/dunst — those are checked as optional WARNs below, not hard FAILs.
+for bin in Hyprland hyprctl hyprland hyprlock hypridle kitty rofi; do
     case "$bin" in
         Hyprland|hyprland)
             _check "binary: $bin" "command -v $bin || [ -x /usr/local/bin/$bin ] || [ -x /usr/bin/$bin ]" FAIL "rerun ./install.sh --resume" ;;
@@ -62,7 +64,7 @@ done
 
 # ----- optional binaries ---------------------------------------------------
 printf "\n%s ===== optional tools =====\n" "$INFO"
-for bin in waybar wallust swww grim slurp wf-recorder hyprshot pokemon-colorscripts; do
+for bin in waybar wallust swww swaync grim slurp wf-recorder hyprshot pokemon-colorscripts; do
     _check "optional: $bin" "command -v $bin" WARN "apt install $bin (or rerun matching phase)"
 done
 
@@ -107,8 +109,7 @@ printf "\n%s ===== configs =====\n" "$INFO"
 for cfg in \
     "$HOME/.config/hypr/hyprland.conf" \
     "$HOME/.config/kitty/kitty.conf" \
-    "$HOME/.config/rofi/config.rasi" \
-    "$HOME/.config/dunst/dunstrc"; do
+    "$HOME/.config/rofi/config.rasi"; do
     _check "config: $cfg" "[ -f '$cfg' ]" FAIL "rerun ./install.sh --resume (dotfiles phase)"
 done
 

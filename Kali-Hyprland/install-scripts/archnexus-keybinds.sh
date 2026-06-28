@@ -44,8 +44,38 @@ cat > "$KEYBINDS_FILE" <<'HYPR_EOF'
 # Mirror of the i3 keybinds shipped in D_WM-XFCE so muscle-memory transfers.
 #
 # Editing this file is fine, but rerunning archnexus-keybinds.sh will
-# overwrite it. To customise, copy what you want into UserKeybinds.conf
-# (sourced earlier — later binds win, so your overrides take precedence).
+# overwrite it.
+#
+# IMPORTANT: Hyprland does NOT do "last bind wins" — duplicate bind= entries
+# for the same key STACK, and ALL matching dispatchers fire on the keypress.
+# So we explicitly `unbind` each key first. Because this file is sourced AFTER
+# JaKooLit's UserKeybinds.conf, these unbinds remove their prior binds; the
+# bind= lines below then install the archnexus helper as the sole handler.
+
+# ----- clear any colliding JaKooLit defaults before rebinding ---------------
+unbind = SUPER,        slash
+unbind = SUPER,        H
+unbind = SUPER,        X
+unbind = SUPER,        W
+unbind = SUPER,        A
+unbind = SUPER SHIFT,  B
+unbind = SUPER,        N
+unbind = SUPER,        V
+unbind = SUPER SHIFT,  S
+unbind = ,             Print
+unbind = SUPER,        Print
+unbind = SHIFT,        Print
+unbind = SUPER SHIFT,  Print
+unbind = SUPER SHIFT,  R
+unbind = SUPER,        F8
+unbind = ,             XF86MonBrightnessUp
+unbind = ,             XF86MonBrightnessDown
+unbind = ,             XF86AudioRaiseVolume
+unbind = ,             XF86AudioLowerVolume
+unbind = ,             XF86AudioMute
+unbind = ,             XF86AudioPlay
+unbind = ,             XF86AudioNext
+unbind = ,             XF86AudioPrev
 
 # ----- archnexus pickers ---------------------------------------------------
 # Two help bindings — SUPER+slash and SUPER+H — both open archnexus-cheatsheet
@@ -94,7 +124,7 @@ if [ -f "$SETTINGS_FILE" ]; then
         {
             echo ""
             echo "# Added by archnexus-keybinds.sh — sourced AFTER UserKeybinds.conf"
-            echo "# so archnexus bindings override JaKooLit defaults on collision."
+            echo "# so its leading unbind= lines clear JaKooLit defaults before rebinding."
             echo "source = ~/.config/hypr/UserConfigs/archnexus-keybinds.conf"
         } >> "$SETTINGS_FILE"
         echo -e "${OK} Wired archnexus-keybinds.conf into $SETTINGS_FILE"

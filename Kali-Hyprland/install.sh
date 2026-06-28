@@ -891,16 +891,21 @@ execute_script "hyprutils.sh"
 [ -t 1 ] && sleep 1 || true
 execute_script "hyprlang.sh"
 [ -t 1 ] && sleep 1 || true
-execute_script "hyprtoolkit.sh"
+# hyprwayland-scanner is a build-time codegen tool that aquamarine, hyprtoolkit
+# and hyprland hard-require via find_package(... REQUIRED). It is NOT available
+# from apt, so it must be built BEFORE any of them configure or their cmake
+# aborts (and aquamarine being absent then breaks the Hyprland build itself).
+execute_script "hyprwayland-scanner.sh"
 [ -t 1 ] && sleep 1 || true
 # Ensure wayland-protocols (from source) is installed to satisfy Hyprland's >= 1.45 requirement
 execute_script "wayland-protocols-src.sh"
 [ -t 1 ] && sleep 1 || true
-execute_script "aquamarine.sh"
-[ -t 1 ] && sleep 1 || true
 execute_script "hyprgraphics.sh"
 [ -t 1 ] && sleep 1 || true
-execute_script "hyprwayland-scanner.sh"
+execute_script "aquamarine.sh"
+[ -t 1 ] && sleep 1 || true
+# hyprtoolkit depends on hyprwayland-scanner + hyprgraphics + aquamarine + hyprutils + hyprlang
+execute_script "hyprtoolkit.sh"
 [ -t 1 ] && sleep 1 || true
 execute_script "hyprland-protocols.sh"
 [ -t 1 ] && sleep 1 || true

@@ -15,7 +15,11 @@ sudo apt-get install -y --no-install-recommends arc-theme papirus-icon-theme \
 THEME_DIR="$HOME/.themes"
 mkdir -p "$THEME_DIR"
 
-if [ ! -d "$THEME_DIR/Catppuccin-Mocha-Standard-Mauve-Dark" ]; then
+# v1.0.x ships the zip with this exact top-level folder name — it must match
+# both the existence guard (idempotency) and the xfconf ThemeName value below.
+CAT_NAME="catppuccin-mocha-mauve-standard+default"
+
+if [ ! -d "$THEME_DIR/$CAT_NAME" ]; then
     log "downloading Catppuccin GTK theme"
     tmp=$(mktemp -d)
     curl_err=$(mktemp)
@@ -49,8 +53,8 @@ fi
 
 # Set GTK theme via xfconf if available
 if command -v xfconf-query >/dev/null 2>&1; then
-    if [ -d "$THEME_DIR/Catppuccin-Mocha-Standard-Mauve-Dark" ]; then
-        GTK="Catppuccin-Mocha-Standard-Mauve-Dark"
+    if [ -d "$THEME_DIR/$CAT_NAME" ]; then
+        GTK="$CAT_NAME"
     else
         GTK="Arc-Dark"
     fi

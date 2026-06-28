@@ -19,7 +19,12 @@ alias ls='eza --icons --group-directories-first'
 alias ll='eza -lah --icons --group-directories-first'
 alias la='eza -a --icons --group-directories-first'
 alias tree='eza --tree --icons'
-alias cat='bat --paging=never'
+# Debian/Kali ship `bat` as the `batcat` binary; prefer it, fall back gracefully.
+if command -v batcat >/dev/null 2>&1; then
+  alias cat='batcat --paging=never'
+elif command -v bat >/dev/null 2>&1; then
+  alias cat='bat --paging=never'
+fi
 alias top='btop'
 alias grep='grep --color=auto'
 alias df='df -h'
