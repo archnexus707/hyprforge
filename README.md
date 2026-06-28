@@ -322,11 +322,11 @@ If hyprforge made your desktop glow:
 
 ---
 
-## ◆ Special thanks
+## ◆ Credits
 
-**archnexus707** — forged the Kali-Hyprland stack.
+Forged and maintained by **[archnexus707](https://github.com/archnexus707)**.
 
-Hyprland: [hyprwm](https://github.com/hyprwm). Themes: [Tokyo Night](https://github.com/folke/tokyonight.nvim), [Catppuccin](https://github.com/catppuccin).
+Built on [Hyprland](https://github.com/hyprwm) · palettes from [Tokyo Night](https://github.com/folke/tokyonight.nvim) and [Catppuccin](https://github.com/catppuccin) · terminal greeter via [pokemon-colorscripts](https://gitlab.com/phoneybadger/pokemon-colorscripts).
 
 ---
 
